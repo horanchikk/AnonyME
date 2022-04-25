@@ -242,3 +242,5 @@ async def get_room_history(token: str):
         return Errors.ROOM_IS_NOT_EXISTS
     room = await db.get_room(token)
     return {'response': {'history': room.json()['history']}}
+
+#  -----=== вот на этом моменте всех всё заебало, спасибо за внимание!!!  ===----- #
