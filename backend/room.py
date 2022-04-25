@@ -1,6 +1,8 @@
 from json import loads, dumps
 from typing import NoReturn, List, Dict, Any
 
+from message import Message
+
 
 class Room:
     """Room class keeps room object from database"""
@@ -19,9 +21,9 @@ class Room:
     
     def add_msg(
             self,
-            msg: Dict[str, Any]
+            msg: Message
     ) -> NoReturn:
-        self.history.append(msg)
+        self.history.append(msg.json())
     
     def __str__(self) -> str:
         return f'{self._id} {self.name}. {self.token}'

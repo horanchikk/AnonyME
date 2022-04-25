@@ -42,7 +42,7 @@ class Database:
     ) -> NoReturn:
         """Adds a new room in database."""
         self.cursor.execute(
-            'insert into user (name, token, history, users) values (?, ?, ?, ?)',
+            'insert into room (name, token, history, users) values (?, ?, ?, ?)',
             (name, token, '[]', '[]')
         )
         self.connection.commit()
@@ -63,15 +63,37 @@ class Database:
             self,
             token: str
     ) -> User:
+        """Returns user data as User class"""
         result = self.cursor.execute(
             'select * from user where token = ?', (token,)
         ).fetchone()
         return User(result)
     
+    async def get_users(self) -> User:
+        """Returns user data as Users class"""
+        result = self.cursor.execute('select * from user').fetchall()
+        return [User(i) for i in result]
+    
+    async def get_room(
+            self,
+            token: str
+    ) -> Room:
+        """Returns room data as Room class"""
+        result = self.cursor.execute(
+            'select * from room where token = ?', (token,)
+        ).fetchone()
+        return Room(result)
+    
+    async def get_rooms(self) -> Room:
+        """Returns room data as Rooms class"""
+        result = self.cursor.execute('select * from room').fetchall()
+        return [Room(i) for i in result]
+    
     async def has_room_by_token(
             self,
             token: str
     ) -> bool:
+        """Returns True when room with token is exists."""
         return bool(
             self.cursor.execute(
                 'select * from room where token = ?', (token,)
@@ -92,6 +114,7 @@ class Database:
             self,
             token: str
     ) -> bool:
+        """Returns True when user with token is exists."""
         return bool(
             self.cursor.execute(
                 'select * from user where token = ?', (token,)
@@ -102,16 +125,20 @@ class Database:
             self,
             room: Room
     ) -> NoReturn:
+        """Saves Room object"""
         self.cursor.execute(
-            'update table room (name, history, users) values (?, ?, ?) where id = ?',
+            'update room set (name, history, users) = (?, ?, ?) where id = ?',
             (room.name, dumps(room.history), dumps(room.users), room._id)
         )
+        self.connection.commit()
     
     async def save_user(
             self,
             user: User
     ) -> NoReturn:
+        """Saves User object"""
         self.cursor.execute(
-            'update table user (username, room) values (?, ?) where id = ?',
+            'update user set (username, room) = (?, ?) where id = ?',
             (user.username, user.room, user._id)
         )
+        self.connection.commit()
