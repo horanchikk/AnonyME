@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.router-link-active {
+  font-weight: 700;
+}
+
+.theader a:hover {
+  color: aquamarine;
+  transition: 0.2s ease-in-out;
+}
