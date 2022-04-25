@@ -1,27 +1,21 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import first from "../pages/first.vue";
-import second from "../pages/second.vue";
+import app from "../pages/app.vue";
 import notFound from "../pages/404.vue";
 import home from "../pages/home.vue";
 
 const routes = [
   {
-    path: "/home",
+    path: "/",
     name: "home",
     component: home,
   },
   {
-    path: "/first",
-    name: "first",
-    component: first,
+    path: "/app",
+    name: "app",
+    component: app,
   },
   {
-    path: "/second",
-    name: "second",
-    component: second,
-  },
-  {
-    path: "/",
+    path: "/:catchAll(.*)",
     name: "notFound",
     component: notFound,
   },

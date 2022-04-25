@@ -4,8 +4,8 @@
     id="Слой_1"
     data-name="Слой 1"
     viewBox="0 0 484 64.11"
-    width="258"
-    height="100"
+    width="200px"
+    height="30px"
   >
     <polygon
       class="cls-1"

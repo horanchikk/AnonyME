@@ -7,7 +7,7 @@
         <router-link to="/second"> Second Page </router-link>
       </ul>
     </header> -->
-    <div class="flex-auto mainapp">
+    <div class="flex-auto text-white mainapp">
       <router-view />
     </div>
   </div>
