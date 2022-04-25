@@ -1,14 +1,51 @@
 <template>
-  <div class="flex flex-col w-full h-full justify-center items-center">
-    <div v-if="loading" class="flex flex-col justify-center items-center">
-      <img src="../../public/loading.svg" />
-      <h2>Loading</h2>
+  <div
+    class="w-full h-full flex flex-col gap-1 justify-center items-center text-white helkow"
+  >
+    <icon class="my-5" />
+    <div class="flex flex-col flex-auto items-center justify-center">
+      <h1 class="font-medium text-lg text-center">
+        {{ username }}, начните общение прямо сейчас!
+      </h1>
+      <div class="flex gap-7 my-7">
+        <div
+          @click="enter_in_room()"
+          class="flex flex-col justify-center items-center cursor-pointer transition ease-in-out duration-200 hover:scale-125"
+        >
+          <img class="w-20 max-h-16" src="../../public/twogays.svg" alt="" />
+          <h2>Общаться вдвоём</h2>
+        </div>
+        <div
+          @click="enter_in_room()"
+          class="flex flex-col justify-center items-center cursor-pointer transition ease-in-out duration-200 hover:scale-125"
+        >
+          <img class="w-40 max-h-16" src="../../public/threegays.svg" alt="" />
+          <h2>Общаться в группе</h2>
+        </div>
+      </div>
+      <h3 class="my-3 font-bold text-red-500 text-xs">{{ error }}</h3>
     </div>
-    <div v-else class="flex w-full h-full">
-      <div class="p-3 w-72 h-full">
+    <div
+      class="flex w-full h-20 text-xs justify-between items-end text-slate-500"
+    >
+      <a href="https://github.com/horanchikk/AnonyME"
+        >© AVOCAT 2022. All rights reserved</a
+      >
+      <button
+        class="p-10 text-2xl text-white transition ease-in-out duration-200 hover:text-slate-400"
+        @click="logout()"
+      >
+        Выйти
+      </button>
+    </div>
+  </div>
+
+  <!-- <div class="flex justify-center items-center">
+    <div class="flex w-screen h-screen">
+      <div class="p-3 w-72">
         <icon />
         <div class="flex w-full py-3 justify-between">
-          <h2 class="text-2xl">Test User</h2>
+          <h2 class="text-2xl">{{ username }}</h2>
           <h2 class="flex text-lg py-1">
             <button @click="logout()">Выйти</button>
           </h2>
@@ -16,20 +53,26 @@
         <h3>{{ msg }}</h3>
       </div>
       <div class="flex flex-col flex-auto gap-5 justify-center items-center">
-        <h1 class="text-2xl">Начните общение прямо сейчас</h1>
+        <h1 class="text-2xl">{{ username }}, начните общение прямо сейчас!</h1>
         <div class="w-80 h-40 flex justify-between">
-          <div class="flex flex-col justify-center items-center cursor-pointer">
+          <div
+            @click="enter_in_room()"
+            class="flex flex-col justify-center items-center cursor-pointer"
+          >
             <img class="w-20 h-20" src="../../public/twogays.svg" alt="" />
             <h2>Общаться вдвоём</h2>
           </div>
-          <div class="flex flex-col justify-center items-center cursor-pointer">
+          <div
+            @click="enter_in_room()"
+            class="flex flex-col justify-center items-center cursor-pointer"
+          >
             <img class="w-40 h-20" src="../../public/threegays.svg" alt="" />
             <h2>Общаться в группе</h2>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -42,7 +85,7 @@ export default {
     return {
       msg: "",
       token: "",
-      loading: true,
+      username: "",
     };
   },
   components: {
@@ -51,7 +94,12 @@ export default {
     Input,
   },
   methods: {
-    logout() {
+    async logout() {
+      // 500 status code + CORS ERROR => FastAPI error
+      const req = await fetch(
+        `http://localhost:8000/user/remove?token=${this.token}`
+      );
+      console.log(req.json());
       location.href = "http://localhost:3000";
     },
     updateToken() {
@@ -67,31 +115,13 @@ export default {
       );
       return matches ? decodeURIComponent(matches[1]) : undefined;
     },
-    userGet() {
-      // http://localhost:8000/room/history.get?token=
-      // http://localhost:8000/room/history.get?token=
-      // const req = await fetch(`http://localhost:8000/user/get?token=${this.token}`);
-      // const res = req.json()
-      // console.log(res)
-    },
-    createConnection() {
-      this.loading = true;
-      var conn = new WebSocket(
-        `ws://localhost:8000/user/poll?token=${this.token}`
-      );
-      conn.onmessage = function (e) {
-        console.log(e.data);
-      };
-      conn.onopen = () => {
-        conn.send("idi nahoy");
-        this.loading = false;
-      };
+    enter_in_room() {
+      location.href = "http://localhost:3000/#/room";
     },
   },
   mounted() {
     this.token = this.getCookie("token");
-    this.createConnection();
-    // this.getHistory();
+    this.username = this.getCookie("username");
   },
 };
 </script>

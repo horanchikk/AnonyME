@@ -14,8 +14,14 @@
         placeholder="Введите свой ник"
         :type="'login'"
         @username="setUsername"
+        v-on:keyup.enter="createUser()"
       />
-      <Btn @click="createUser()" :text="'Продолжить'" :type="'lg'" />
+      <Btn
+        id="btnnext"
+        @click="createUser()"
+        :text="'Продолжить'"
+        :type="'lg'"
+      />
       <h3 class="my-3 font-bold text-red-500 text-xs">{{ error }}</h3>
     </div>
     <div class="flex w-full h-20 text-xs items-end text-slate-500">
@@ -54,6 +60,10 @@ export default {
         const res = await req.json();
         console.log(`Token is: ${res["response"]["token"]}`);
         document.cookie = `token=${res["response"]["token"]}`;
+        document.cookie = `username=${this.username}`;
+        await fetch(
+          `http://localhost:8000/room/new?name=123123&user_token=${res["response"]["token"]}`
+        );
         location.href = "http://localhost:3000/#/app";
       } else {
         this.error = "User is created. Try change username";
