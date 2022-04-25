@@ -30,7 +30,8 @@ class Database:
                 name text not null,
                 token text not null,
                 history text not null,
-                users text not null
+                users text not null,
+                users_limit int not null
             );'''
         )
         self.connection.commit()
@@ -38,12 +39,13 @@ class Database:
     async def add_room(
             self,
             name: str,
-            token: str
+            token: str,
+            users_limit: int
     ) -> NoReturn:
         """Adds a new room in database."""
         self.cursor.execute(
-            'insert into room (name, token, history, users) values (?, ?, ?, ?)',
-            (name, token, '[]', '[]')
+            'insert into room (name, token, history, users, users_limit) values (?, ?, ?, ?, ?)',
+            (name, token, '[]', '[]', users_limit)
         )
         self.connection.commit()
     
@@ -121,14 +123,34 @@ class Database:
             ).fetchone()
         )
     
+    async def remove_room(
+            self,
+            token: str
+    ) -> NoReturn:
+        """Removes the room object"""
+        self.cursor.execute(
+            'delete from room where token = ?', (token,)
+        )
+        self.connection.commit()
+    
+    async def remove_user(
+            self,
+            token: str
+    ) -> NoReturn:
+        """Removes the user object"""
+        self.cursor.execute(
+            'delete from user where token = ?', (token,)
+        )
+        self.connection.commit()
+    
     async def save_room(
             self,
             room: Room
     ) -> NoReturn:
         """Saves Room object"""
         self.cursor.execute(
-            'update room set (name, history, users) = (?, ?, ?) where id = ?',
-            (room.name, dumps(room.history), dumps(room.users), room._id)
+            'update room set (name, history, users, users_limit) = (?, ?, ?, ?) where id = ?',
+            (room.name, dumps(room.history), dumps(room.users), room._id, room.users_limit)
         )
         self.connection.commit()
     

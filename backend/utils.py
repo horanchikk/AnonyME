@@ -12,7 +12,7 @@ async def gen_token(size: int = 64) -> str:
     ])
 
 
-async def gen_error(
+def gen_error(
         value: str,
         error_code: int
 ) -> Response:

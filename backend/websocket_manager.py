@@ -21,14 +21,19 @@ class WebsocketManager:
             self,
             ws: WebSocket
     ) -> NoReturn:
-        self.active.remove(ws)
+        for active in self.active:
+            if ws == active[0]:
+                self.active.remove(active)
     
     async def send_personal(
             self,
             ws: WebSocket,
             message: Dict[str, Any]
     ) -> NoReturn:
-        await ws.send_json(message)
+        try:
+            await ws.send_json(message)
+        except RuntimeError as e:
+            print(e)
     
     async def broadcast_to_room(
             self,
@@ -41,5 +46,8 @@ class WebsocketManager:
                 continue
             room = await db.get_room(room_token)
             room.history.append(message)
-            await db.save_room(room)
-            await ws.send_json(message)
+            try:
+                await ws.send_json(message)
+                await db.save_room(room)
+            except RuntimeError as e:
+                print(e)

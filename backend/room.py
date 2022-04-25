@@ -12,6 +12,7 @@ class Room:
         self.token = args[2]
         self.history: List[Dict[Any]] = loads(args[3])
         self.users: List[int] = loads(args[4])
+        self.users_limit: int = args[5]
     
     def add_user(
             self,
@@ -35,5 +36,6 @@ class Room:
             'name': self.name,
             'token': self.token,
             'users': self.users,
+            'users_limit': self.users_limit,
             'history': self.history
         }
