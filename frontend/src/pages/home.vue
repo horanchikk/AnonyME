@@ -24,7 +24,7 @@
         :text="'Продолжить'"
         :type="'lg'"
       />
-      <h3 class="my-3 font-bold text-red-500 text-xs">{{ error }}</h3>
+      <h3 class="my-3 font-bold text-red-500 text-base">{{ error }}</h3>
     </div>
     <div class="flex w-full h-20 text-xs items-end text-slate-500">
       <a href="https://github.com/horanchikk/AnonyME"
@@ -55,6 +55,10 @@ export default {
       this.username = name;
     },
     async createUser() {
+      if (this.username == ""){
+        this.error = "Username is empty. Try again.";
+        return;
+      }
       const req = await fetch(
         `http://localhost:8000/user/new?name=${this.username}`
       );

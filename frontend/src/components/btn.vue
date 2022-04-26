@@ -1,6 +1,6 @@
 <template>
   <button
-    class="bg-rred-200 transition ease-in-out duration-200 rounded-xl font-medium hover:bg-rred-100 hover:shadow-lg"
+    class="bg-rred-200 transition ease-in-out duration-200 rounded-xl font-medium hover:bg-rred-100 hover:shadow-lg active:bg-rred-50"
     :class="{
       'text-xl py-2 px-4': type === 'sm',
       'text-xl py-2 px-24': type === 'lg',
