@@ -207,9 +207,8 @@ export default {
       this.connection.onmessage = async (e) => {
         let msg = JSON.parse(e.data).response;
         if (msg.author !== undefined && msg.text !== undefined) {
-          console.log(msg);
           msg.text = marked(msg.text);
-          msg.time = new Date(parseInt(msg.time)).toLocaleTimeString();
+          msg.time = new Date(msg.time * 1000).toLocaleTimeString();
           this.dialog.push(msg);
         }
         this.scrollDown();
@@ -223,7 +222,7 @@ export default {
       this.dialog = res["response"]["history"];
       this.dialog.forEach((msg) => {
         msg.text = marked(msg.text);
-        msg.time = new Date(parseInt(msg.time)).toLocaleTimeString();
+        msg.time = new Date(msg.time * 1000).toLocaleTimeString();
       });
     },
     scrollDown() {
