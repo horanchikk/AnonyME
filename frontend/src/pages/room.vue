@@ -91,7 +91,7 @@
             />
             <img
               @click="sendMessage()"
-              class="h-full px-4 cursor-pointer transition ease-in-out duration-200 hover:scale-125"
+              class="h-full ml-4 px-4 cursor-pointer transition ease-in-out duration-200 hover:scale-125"
               src="/send.svg"
               alt="send"
             />
@@ -146,6 +146,7 @@ import Icon from "../components/icon.vue";
 import Btn from "../components/btn.vue";
 import Input from "../components/input.vue";
 import { marked } from "marked";
+import emoji_list from "./emojilist.json";
 
 export default {
   data() {
@@ -157,6 +158,7 @@ export default {
       roomtoken: "",
       dialog: [],
       chatmessage: "",
+      emoji_list: emoji_list
     };
   },
   components: {
@@ -223,12 +225,19 @@ export default {
       });
     },
     scrollDown() {
-      console.log("scroll!");
       let chat = document.getElementById("mainChat");
       chat.scrollIntoView({behavior: 'smooth'});
-      console.log(chat.scrollHeight);
       chat.scrollTop = chat.scrollHeight;
     },
+    emojify(str) {
+      let matches = str.matchAll(/:([\w\d_]+):/g);
+      [...matches].forEach((emoji_name) => {
+        if (emoji_name[1] in emoji_list){
+          str = str.replace(emoji_name[0], emoji_list[emoji_name[1]]);
+        }
+      });
+      return str;
+    }
   },
   mounted() {
     this.token = this.getCookie("token");
@@ -240,10 +249,11 @@ export default {
     );
     this.getDialog();
     this.createConnection();
+    console.log(this.emojify(":heart: asdasdas da ad :smile:"));
   },
   updated() {
     this.scrollDown();
-  }
+  },
 };
 </script>
 

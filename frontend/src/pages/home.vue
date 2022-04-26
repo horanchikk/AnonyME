@@ -73,6 +73,7 @@ export default {
         location.href = "http://localhost:3000/#/app";
       } else {
         this.error = "User is created. Try change username";
+        this.errorAnimation = true;
       }
     },
   },
