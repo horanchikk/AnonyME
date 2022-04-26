@@ -26,3 +26,6 @@ dist-ssr
 
 package-lock.json
 yarn.lock
+
+# Python
+__pycache__/*
