@@ -39,40 +39,6 @@
       </button>
     </div>
   </div>
-
-  <!-- <div class="flex justify-center items-center">
-    <div class="flex w-screen h-screen">
-      <div class="p-3 w-72">
-        <icon />
-        <div class="flex w-full py-3 justify-between">
-          <h2 class="text-2xl">{{ username }}</h2>
-          <h2 class="flex text-lg py-1">
-            <button @click="logout()">Выйти</button>
-          </h2>
-        </div>
-        <h3>{{ msg }}</h3>
-      </div>
-      <div class="flex flex-col flex-auto gap-5 justify-center items-center">
-        <h1 class="text-2xl">{{ username }}, начните общение прямо сейчас!</h1>
-        <div class="w-80 h-40 flex justify-between">
-          <div
-            @click="enter_in_room()"
-            class="flex flex-col justify-center items-center cursor-pointer"
-          >
-            <img class="w-20 h-20" src="../../public/twogays.svg" alt="" />
-            <h2>Общаться вдвоём</h2>
-          </div>
-          <div
-            @click="enter_in_room()"
-            class="flex flex-col justify-center items-center cursor-pointer"
-          >
-            <img class="w-40 h-20" src="../../public/threegays.svg" alt="" />
-            <h2>Общаться в группе</h2>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
 </template>
 
 <script>
@@ -121,7 +87,7 @@ export default {
         `http://localhost:8000/room/new?user_token=${this.token}&name=asd123&users_limit=${limit}`
       );
       const ans = await req.json();
-      document.cookie = `room=${req["response"]["token"]}`;
+      document.cookie = `room=${ans["response"]["token"]}`;
     },
     async enter_in_room(limit) {
       const req = await fetch("http://localhost:8000/room/getall");

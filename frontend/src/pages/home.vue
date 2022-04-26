@@ -24,12 +24,12 @@
         :text="'Продолжить'"
         :type="'lg'"
       />
-      <h3 class="my-3 font-bold text-red-500 text-base">{{ error }}</h3>
+      <h3 v-if="error != ''" class="my-3 font-bold text-red-500 text-base animate-bounce" @animationend="animateError = false">{{ error }}</h3>
     </div>
     <div class="flex w-full h-20 text-xs items-end text-slate-500">
       <a href="https://github.com/horanchikk/AnonyME"
-        >© AVOCAT 2022. All rights reserved</a
-      >
+        >© AVOCAT 2022. All rights reserved
+      </a>
     </div>
   </div>
 </template>
@@ -43,6 +43,7 @@ export default {
     return {
       username: "",
       error: "",
+      errorAnimation: false
     };
   },
   components: {
@@ -55,8 +56,10 @@ export default {
       this.username = name;
     },
     async createUser() {
+      this.errorAnimation = false;
       if (this.username == ""){
         this.error = "Username is empty. Try again.";
+        this.errorAnimation = true;
         return;
       }
       const req = await fetch(
