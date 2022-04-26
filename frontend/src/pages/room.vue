@@ -215,7 +215,7 @@ export default {
       this.connection.onmessage = async (e) => {
         let msg = JSON.parse(e.data).response;
         if (msg.author !== undefined && msg.text !== undefined) {
-          msg.text = marked(msg.text);
+          msg.text = this.emojify(marked(msg.text));
           msg.time = new Date(msg.time * 1000).toLocaleTimeString();
           this.dialog.push(msg);
         }
@@ -231,7 +231,7 @@ export default {
       const res = await req.json();
       this.dialog = res["response"]["history"];
       this.dialog.forEach((msg) => {
-        msg.text = marked(msg.text);
+        msg.text = this.emojify(marked(msg.text));
         msg.time = new Date(msg.time * 1000).toLocaleTimeString();
       });
     },
