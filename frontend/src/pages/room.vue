@@ -167,8 +167,10 @@ export default {
     Input,
   },
   methods: {
+    /**
+     * Очистка всех куки и удаление пользователя.
+     */
     async logout() {
-      // Clear all cookies and delete user
       await fetch(`http://localhost:8000/user/remove?token=${this.token}`);
       document.cookie = 'token=""';
       document.cookie = 'username=""';
@@ -193,6 +195,9 @@ export default {
       );
       return matches ? decodeURIComponent(matches[1]) : undefined;
     },
+    /**
+     * Отправка сообщения (через вебсокеты).
+     */
     async sendMessage() {
       if (this.chatmessage !== "") {
         this.connection.send(this.chatmessage);
@@ -200,6 +205,9 @@ export default {
         this.chatmessage = "";
       }
     },
+    /**
+     * Подключение к вебсокетам.
+     */
     async createConnection() {
       this.connection.onopen = () => {
         console.log("connected");
@@ -213,6 +221,9 @@ export default {
         }
       };
     },
+    /**
+     * Получение истории чата и запись в dialog.
+     */
     async getDialog() {
       const req = await fetch(
         `http://localhost:8000/room/history.get?token=${this.roomtoken}`
@@ -224,11 +235,17 @@ export default {
         msg.time = new Date(msg.time * 1000).toLocaleTimeString();
       });
     },
+    /**
+     * Перемотка в самый низ диалога.
+     */
     scrollDown() {
       let chat = document.getElementById("mainChat");
       chat.scrollIntoView({behavior: 'smooth'});
       chat.scrollTop = chat.scrollHeight;
     },
+    /**
+     * Переводит все :название_смайлика: в смайлики, если это возможно.
+     */
     emojify(str) {
       let matches = str.matchAll(/:([\w\d_]+):/g);
       [...matches].forEach((emoji_name) => {
