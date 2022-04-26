@@ -93,6 +93,7 @@ export default {
       const req = await fetch("http://localhost:8000/room/getall");
       const ans = await req.json();
       if (ans["response"].length === 0) {
+        // Если нет созданных комнат - создаем новую.
         await this.create_empty_room(limit);
       } else {
         const index = Math.floor(Math.random() * ans["response"].length);

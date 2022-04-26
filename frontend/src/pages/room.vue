@@ -97,7 +97,7 @@
             />
           </div>
 
-          <!-- icons   -->
+          <!-- bottom icons -->
           <div class="flex w-full justify-center">
             <div class="flex w-4/6 p-5 justify-between">
               <div
@@ -197,12 +197,10 @@ export default {
         document.getElementById("chatInput").value = "";
         this.chatmessage = "";
       }
-      this.scrollDown();
     },
     async createConnection() {
       this.connection.onopen = () => {
         console.log("connected");
-        this.scrollDown();
       };
       this.connection.onmessage = async (e) => {
         let msg = JSON.parse(e.data).response;
@@ -211,7 +209,6 @@ export default {
           msg.time = new Date(msg.time * 1000).toLocaleTimeString();
           this.dialog.push(msg);
         }
-        this.scrollDown();
       };
     },
     async getDialog() {
@@ -226,8 +223,11 @@ export default {
       });
     },
     scrollDown() {
-      document.getElementById("mainChat").scrollTop =
-        document.getElementById("mainChat").scrollHeight;
+      console.log("scroll!");
+      let chat = document.getElementById("mainChat");
+      chat.scrollIntoView({behavior: 'smooth'});
+      console.log(chat.scrollHeight);
+      chat.scrollTop = chat.scrollHeight;
     },
   },
   mounted() {
@@ -240,8 +240,10 @@ export default {
     );
     this.getDialog();
     this.createConnection();
-    this.scrollDown();
   },
+  updated() {
+    this.scrollDown();
+  }
 };
 </script>
 
