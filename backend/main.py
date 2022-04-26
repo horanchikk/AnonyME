@@ -50,15 +50,13 @@ async def remove_user(token: str):
         return Errors.USER_IS_NOT_EXISTS
     user = await db.get_user(token)
     if user.room:
-        await manager.broadcast_to_room({
-            'response': Message(
-                f'{user.username} left from chat',
-                user.username, Message.Action.LEFT_FROM_CHAT
-            ).json()}, db, user.room)
+        message = Message(
+            f'{user.username} left from chat',
+            user.username, Message.Action.LEFT_FROM_CHAT)
+        await manager.broadcast_to_room(message, db, user.room)
         room = await db.get_room(user.room)
-        if user._id in room.users:
-            room.users.remove(user._id)
-            await db.save_room(room)
+        room.users.remove(user._id)
+        await db.save_room(room)
     await db.remove_user(token)
 
 
@@ -87,12 +85,8 @@ async def user_send_message(text: str, token: str):
         return Errors.USER_HASNOT_ROOM
     room = await db.get_room(user.room)
     message = Message(text, user.username)
-    room.add_msg(message)
     await db.save_room(room)
-    await manager.broadcast_to_room(
-        {'response': message.json()},
-        db, room.token
-    )
+    await manager.broadcast_to_room(message, db, room.token)
     return SUCCESS
 
 
@@ -110,19 +104,14 @@ async def websocket_endpoint(websocket: WebSocket, token: str):
             text = await websocket.receive_text()
             message = Message(text, user.username)
             room = await db.get_room(user.room)
-            room.add_msg(message)
             await manager.send_personal(websocket, SUCCESS)
-            await manager.broadcast_to_room(
-                {'response': message.json()},
-                db, room.token
-            )
+            await manager.broadcast_to_room(message, db, room.token)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        await manager.broadcast_to_room({
-            'response': Message(
-                f'{user.username} left from chat',
-                user.username, Message.Action.LEFT_FROM_CHAT).json()
-            }, db, user.token)
+        message = Message(
+            f'{user.username} left from chat',
+            user.username, Message.Action.LEFT_FROM_CHAT)
+        await manager.broadcast_to_room(message, db, user.token)
 
 
 @app.get('/user/room.enter')
@@ -134,12 +123,11 @@ async def enter_in_room(token: str, room_token: str):
         return Errors.ROOM_IS_NOT_EXISTS
     user = await db.get_user(token)
     if user.room:
-        await manager.broadcast_to_room({
-            'response': Message(
-                f'{user.username} left from chat',
-                user.username, Message.Action.LEFT_FROM_CHAT
-            ).json()}, db, room_token)
         room = await db.get_room(user.room)
+        message = Message(
+            f'{user.username} left from chat',
+            user.username, Message.Action.LEFT_FROM_CHAT)
+        await manager.broadcast_to_room(message, db, room_token)
         room.users.remove(user._id)
         await db.save_room(room)
     room = await db.get_room(room_token)
@@ -147,13 +135,13 @@ async def enter_in_room(token: str, room_token: str):
         return Errors.ROOM_IS_FULL
     room.add_user(user._id)
     user.room = room_token
+    message = Message(
+        f'{user.username} join the chat',
+        user.username, Message.Action.JOIN_THE_CHAT
+    )
     await db.save_room(room)
     await db.save_user(user)
-    await manager.broadcast_to_room({
-        'response': Message(
-            f'{user.username} join the chat',
-            user.username, Message.Action.JOIN_THE_CHAT
-        ).json()}, db, room_token)
+    await manager.broadcast_to_room(message, db, room_token)
     return SUCCESS
 
 
@@ -164,11 +152,11 @@ async def leave_from_room(token: str):
         return Errors.USER_IS_NOT_EXISTS
     user = await db.get_user(token)
     if user.room:
-        await manager.broadcast_to_room({
-            'response': Message(
-                f'{user.username} left from chat',
-                user.username, Message.Action.LEFT_FROM_CHAT
-            ).json()}, db, user.room)
+        message = Message(
+            f'{user.username} left from chat',
+            user.username, Message.Action.LEFT_FROM_CHAT
+        )
+        await manager.broadcast_to_room(message, db, user.room)
         room = await db.get_room(user.room)
         room.users.remove(user._id)
         await db.save_room(room)

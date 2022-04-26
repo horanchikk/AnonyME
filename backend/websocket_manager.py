@@ -2,6 +2,7 @@ from typing import NoReturn, List, Dict, Any
 
 from fastapi import WebSocket
 from database import Database
+from message import Message
 
 
 class WebsocketManager:
@@ -37,17 +38,17 @@ class WebsocketManager:
     
     async def broadcast_to_room(
             self,
-            message: Dict[str, Any],
+            message: Message,
             db: Database,
-            token: str
+            room_token: str
     ) -> NoReturn:
-        for ws, user_token, room_token in self.active:
-            if room_token != token:
+        room = await db.get_room(room_token)
+        room.add_msg(message)
+        await db.save_room(room)
+        for ws, user_token, _room_token in self.active:
+            if _room_token != room_token:
                 continue
-            room = await db.get_room(room_token)
-            room.history.append(message)
             try:
-                await ws.send_json(message)
-                await db.save_room(room)
+                await ws.send_json({'response': message.json()})
             except RuntimeError as e:
                 print(e)

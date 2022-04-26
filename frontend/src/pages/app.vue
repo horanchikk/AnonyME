@@ -9,17 +9,21 @@
       </h1>
       <div class="flex gap-7 my-7">
         <div
-          @click="enter_in_room()"
+          @click="enter_in_room(2)"
           class="flex flex-col justify-center items-center cursor-pointer transition ease-in-out duration-200 hover:scale-125"
         >
-          <img class="w-20 max-h-16" src="../../public/twogays.svg" alt="" />
+          <img class="w-20 max-h-16" src="../../public/twopersons.svg" alt="" />
           <h2>Общаться вдвоём</h2>
         </div>
         <div
-          @click="enter_in_room()"
+          @click="enter_in_room(4)"
           class="flex flex-col justify-center items-center cursor-pointer transition ease-in-out duration-200 hover:scale-125"
         >
-          <img class="w-40 max-h-16" src="../../public/threegays.svg" alt="" />
+          <img
+            class="w-40 max-h-16"
+            src="../../public/three_persons.svg"
+            alt=""
+          />
           <h2>Общаться в группе</h2>
         </div>
       </div>
@@ -99,7 +103,9 @@ export default {
       const req = await fetch(
         `http://localhost:8000/user/remove?token=${this.token}`
       );
-      console.log(req.json());
+      document.cookie = 'token=""';
+      document.cookie = 'username=""';
+      document.cookie = 'limit=""';
       location.href = "http://localhost:3000";
     },
     updateToken() {
@@ -115,7 +121,13 @@ export default {
       );
       return matches ? decodeURIComponent(matches[1]) : undefined;
     },
-    enter_in_room() {
+    async enter_in_room(limit) {
+      const req = await fetch(
+        `http://localhost:8000/room/new?users_limit=${limit}&name=123123&user_token=${this.token}`
+      );
+      const ans = await req.json();
+      document.cookie = `room=${ans["response"]["token"]}`;
+      document.cookie = `limit=${limit}`;
       location.href = "http://localhost:3000/#/room";
     },
   },

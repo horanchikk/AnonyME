@@ -150,7 +150,7 @@ class Database:
         """Saves Room object"""
         self.cursor.execute(
             'update room set (name, history, users, users_limit) = (?, ?, ?, ?) where id = ?',
-            (room.name, dumps(room.history), dumps(room.users), room._id, room.users_limit)
+            (room.name, dumps(room.history), dumps(room.users), room.users_limit, room._id)
         )
         self.connection.commit()
     

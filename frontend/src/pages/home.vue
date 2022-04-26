@@ -2,8 +2,10 @@
   <div
     class="w-full h-full flex flex-col gap-1 justify-center items-center text-4xl font-semibold text-white helkow"
   >
-    <icon class="my-5" />
-    <div class="flex flex-col flex-auto items-center justify-center">
+    <icon class="my-5 icon-animate" />
+    <div
+      class="flex flex-col flex-auto items-center justify-center body-animate"
+    >
       <h1 class="font-medium text-lg text-center">
         Приветствуем вас в
         <a class="font-bold" style="color: #ef313d">AnonyME</a> <br />
@@ -61,9 +63,6 @@ export default {
         console.log(`Token is: ${res["response"]["token"]}`);
         document.cookie = `token=${res["response"]["token"]}`;
         document.cookie = `username=${this.username}`;
-        await fetch(
-          `http://localhost:8000/room/new?name=123123&user_token=${res["response"]["token"]}`
-        );
         location.href = "http://localhost:3000/#/app";
       } else {
         this.error = "User is created. Try change username";
@@ -73,4 +72,34 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+@keyframes fadein-icon {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0%;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 100%;
+  }
+}
+
+.icon-animate {
+  animation: fadein-icon 1000ms ease-in-out;
+}
+
+@keyframes fadein-body {
+  0% {
+    transform: translateY(50px);
+    opacity: 0%;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 100%;
+  }
+}
+
+.body-animate {
+  animation: fadein-body 1000ms ease-in-out;
+}
+</style>
