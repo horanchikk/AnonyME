@@ -84,13 +84,14 @@
           <div class="flex h-14">
             <Input
               @chatmessage="setMessage"
+              v-on:keyup.enter="sendMessage()"
               id="chatInput"
               class="w-full"
               :type="'chat'"
             />
             <img
               @click="sendMessage()"
-              class="h-full px-4 cursor-pointer hover"
+              class="h-full px-4 cursor-pointer transition ease-in-out duration-200 hover:scale-125"
               src="/send.svg"
               alt="send"
             />
@@ -196,12 +197,12 @@ export default {
         document.getElementById("chatInput").value = "";
         this.chatmessage = "";
       }
-      await this.scrollDown();
+      this.scrollDown();
     },
     async createConnection() {
       this.connection.onopen = () => {
         console.log("connected");
-        await this.scrollDown();
+        this.scrollDown();
       };
       this.connection.onmessage = async (e) => {
         let msg = JSON.parse(e.data).response;
@@ -211,7 +212,7 @@ export default {
           msg.time = new Date(parseInt(msg.time)).toLocaleTimeString();
           this.dialog.push(msg);
         }
-        await this.scrollDown();
+        this.scrollDown();
       };
     },
     async getDialog() {
@@ -225,7 +226,7 @@ export default {
         msg.time = new Date(parseInt(msg.time)).toLocaleTimeString();
       });
     },
-    async scrollDown() {
+    scrollDown() {
       document.getElementById("mainChat").scrollTop =
         document.getElementById("mainChat").scrollHeight;
     },
@@ -264,5 +265,10 @@ export default {
 
 a {
   text-decoration: overline;
+  color: red;
+}
+
+a:visited {
+  color: green;
 }
 </style>
