@@ -12,18 +12,14 @@
           @click="enter_in_room(2)"
           class="flex flex-col justify-center items-center cursor-pointer transition ease-in-out duration-200 hover:scale-125"
         >
-          <img class="w-20 max-h-16" src="../../public/twopersons.svg" alt="" />
+          <img class="w-20 max-h-16" src="/twopersons.svg" alt="" />
           <h2>Общаться вдвоём</h2>
         </div>
         <div
           @click="enter_in_room(4)"
           class="flex flex-col justify-center items-center cursor-pointer transition ease-in-out duration-200 hover:scale-125"
         >
-          <img
-            class="w-40 max-h-16"
-            src="../../public/three_persons.svg"
-            alt=""
-          />
+          <img class="w-40 max-h-16" src="/three_persons.svg" alt="" />
           <h2>Общаться в группе</h2>
         </div>
       </div>
@@ -100,9 +96,8 @@ export default {
   methods: {
     async logout() {
       // 500 status code + CORS ERROR => FastAPI error
-      const req = await fetch(
-        `http://localhost:8000/user/remove?token=${this.token}`
-      );
+      await fetch(`http://localhost:8000/user/remove?token=${this.token}`);
+      console.log(`Token ${this.token} has been deleted from the server`);
       document.cookie = 'token=""';
       document.cookie = 'username=""';
       document.cookie = 'limit=""';
@@ -121,12 +116,31 @@ export default {
       );
       return matches ? decodeURIComponent(matches[1]) : undefined;
     },
-    async enter_in_room(limit) {
+    async create_empty_room(limit) {
       const req = await fetch(
-        `http://localhost:8000/room/new?users_limit=${limit}&name=123123&user_token=${this.token}`
+        `http://localhost:8000/room/new?user_token=${this.token}&name=asd123&users_limit=${limit}`
       );
       const ans = await req.json();
-      document.cookie = `room=${ans["response"]["token"]}`;
+      document.cookie = `room=${req["response"]["token"]}`;
+    },
+    async enter_in_room(limit) {
+      const req = await fetch("http://localhost:8000/room/getall");
+      const ans = await req.json();
+      if (ans["response"].length === 0) {
+        await this.create_empty_room(limit);
+      } else {
+        const index = Math.floor(Math.random() * ans["response"].length);
+        document.cookie = `room=${ans["response"][index]["token"]}`;
+        // пробуем войти в комнату ...
+        const req = await fetch(
+          `http://localhost:8000/user/room.enter?token=${this.token}&room_token=${ans["response"][index]["token"]}`
+        );
+        const res = await req.json();
+        // если комната достигла лимита - создаем новую.
+        if ("detail" in res && res["detail"]["code"] == 6) {
+          await this.this.create_empty_room(limit);
+        }
+      }
       document.cookie = `limit=${limit}`;
       location.href = "http://localhost:3000/#/room";
     },
@@ -138,4 +152,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style />

@@ -29,7 +29,7 @@
                 class="flex flex-col w-full h-full justify-center items-center"
               >
                 <div class="flex flex-col justify-center items-center">
-                  <img src="../../public/loading.svg" />
+                  <img src="/loading.svg" />
                   <h2>Loading</h2>
                 </div>
               </div>
@@ -41,16 +41,28 @@
 
     <div class="flex flex-col items-center justify-center">
       <div class="w-4/6">
-        <div class="overflow-y-scroll scroller">
+        <div class="overflow-y-scroll scroller" id="mainChat">
           <div v-for="msg in dialog" :key="msg">
-            <div v-if="msg.author === this.username" class="flex justify-end">
+            <!-- Обработка статусов (вход в чат и выход из чата) -->
+            <div
+              v-if="msg.action_code == 2 || msg.action_code == 3"
+              class="flex justify-center font-semibold text-xl"
+            >
+              {{ msg.author }} {{ msg.action }}
+            </div>
+            <div
+              v-else-if="msg.author === this.username"
+              class="flex justify-end"
+            >
               <div
                 style="background: #33373d"
                 class="m-5 p-3 px-5 rounded-3xl w-1/2"
               >
                 <p class="mx-5 font-semibold">{{ msg.author }}</p>
                 <p class="my-1" v-html="msg.text"></p>
-                <div class="flex justify-end mx-3 msgtime">{{ msg.time }}</div>
+                <div class="flex justify-end mx-3 msgtime">
+                  {{ msg.time }}
+                </div>
               </div>
             </div>
 
@@ -61,17 +73,25 @@
               >
                 <p class="mx-5 font-semibold">{{ msg.author }}</p>
                 <p class="my-1" v-html="msg.text"></p>
-                <div class="flex justify-end mx-3 msgtime">{{ msg.time }}</div>
+                <div class="flex justify-end mx-3 msgtime">
+                  {{ msg.time }}
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div>
           <div class="flex h-14">
-            <Input @chatmessage="setMessage" class="w-full" :type="'chat'" />
+            <Input
+              @chatmessage="setMessage"
+              id="chatInput"
+              class="w-full"
+              :type="'chat'"
+            />
             <img
+              @click="sendMessage()"
               class="h-full px-4 cursor-pointer hover"
-              src="../../public/send.svg"
+              src="/send.svg"
               alt="send"
             />
           </div>
@@ -85,7 +105,7 @@
                 <img
                   @click="console.log('asd')"
                   class="h-10 cursor-pointer"
-                  src="../../public/search.svg"
+                  src="/search.svg"
                   alt=""
                 />
                 Найти другого
@@ -96,7 +116,7 @@
                 <img
                   @click="console.log('asd')"
                   class="h-10"
-                  src="../../public/quit.svg"
+                  src="/quit.svg"
                   alt=""
                 />
                 Прекратить общение
@@ -107,7 +127,7 @@
                 <img
                   @click="console.log('asd')"
                   class="h-10"
-                  src="../../public/complaint.svg"
+                  src="/complaint.svg"
                   alt=""
                 />
                 Жалоба
@@ -159,10 +179,6 @@ export default {
     setMessage(value) {
       this.chatmessage = value;
     },
-    sendMessage() {
-      this.chatmessage;
-      // здесьнадо будет this.connection.send(текст с инпута);
-    },
     getCookie(name) {
       // какой-то костыль, js пофиксите твари :cry:
       let matches = document.cookie.match(
@@ -174,21 +190,28 @@ export default {
       );
       return matches ? decodeURIComponent(matches[1]) : undefined;
     },
+    async sendMessage() {
+      if (this.chatmessage !== "") {
+        this.connection.send(this.chatmessage);
+        document.getElementById("chatInput").value = "";
+        this.chatmessage = "";
+      }
+      await this.scrollDown();
+    },
     async createConnection() {
       this.connection.onopen = () => {
         console.log("connected");
+        await this.scrollDown();
       };
       this.connection.onmessage = async (e) => {
-        this.connection.onopen = () => {
-          console.log("connected");
-        };
         let msg = JSON.parse(e.data).response;
         if (msg.author !== undefined && msg.text !== undefined) {
           console.log(msg);
           msg.text = marked(msg.text);
-          msg.time = new Date(parseInt(msg.time).toLocaleTimeString());
+          msg.time = new Date(parseInt(msg.time)).toLocaleTimeString();
           this.dialog.push(msg);
         }
+        await this.scrollDown();
       };
     },
     async getDialog() {
@@ -199,8 +222,12 @@ export default {
       this.dialog = res["response"]["history"];
       this.dialog.forEach((msg) => {
         msg.text = marked(msg.text);
-        msg.time = new Date(parseInt(msg.time).toLocaleTimeString());
+        msg.time = new Date(parseInt(msg.time)).toLocaleTimeString();
       });
+    },
+    async scrollDown() {
+      document.getElementById("mainChat").scrollTop =
+        document.getElementById("mainChat").scrollHeight;
     },
   },
   mounted() {
@@ -213,6 +240,7 @@ export default {
     );
     this.getDialog();
     this.createConnection();
+    this.scrollDown();
   },
 };
 </script>
@@ -232,5 +260,9 @@ export default {
 .msgtime {
   transform: translate(10px, 5px);
   color: rgba(255, 255, 255, 0.5);
+}
+
+a {
+  text-decoration: overline;
 }
 </style>
