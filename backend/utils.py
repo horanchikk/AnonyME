@@ -18,5 +18,5 @@ def gen_error(
 ) -> Response:
     """This function generates an error response."""
     return Response(
-        content=f'{{"detail": {{"message": "{value}", "code": {error_code}}}}}',
+        content=f'{{"detail": {{"message": "{value}", "code": {error_code} }}}}',
         status_code=status.HTTP_400_BAD_REQUEST)

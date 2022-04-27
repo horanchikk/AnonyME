@@ -92,9 +92,11 @@ export default {
     async enter_in_room(limit) {
       const req = await fetch("http://localhost:8000/room/getall");
       const ans = await req.json();
-      const available_rooms = ans["response"].filter(x => x["users_limit"] == limit && !x["is_full"]);
+      const available_rooms = ans["response"].filter(
+        (x) => x["users_limit"] == limit && !x["is_full"]
+      );
       console.log(available_rooms);
-      console.log( ans["response"]);
+      console.log(ans["response"]);
       if (available_rooms.length === 0) {
         // Если нет доступных комнат - создаем новую.
         await this.create_empty_room(limit);

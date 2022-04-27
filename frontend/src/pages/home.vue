@@ -24,12 +24,21 @@
         :text="'Продолжить'"
         :type="'lg'"
       />
-      <h3 v-if="error != ''" class="my-3 font-bold text-red-500 text-base animate-bounce" @animationend="animateError = false">{{ error }}</h3>
+      <h3
+        v-if="error != ''"
+        class="my-3 font-bold text-red-500 text-base animate-pulse"
+        @animationend="error = ''"
+      >
+        {{ error }}
+      </h3>
     </div>
+
     <div class="flex w-full h-20 text-xs items-end text-slate-500">
-      <a href="https://github.com/horanchikk/AnonyME"
-        >© AVOCAT 2022. All rights reserved
-      </a>
+      <div class="flex flex-col">
+        <a href="https://github.com/horanchikk/AnonyME"
+          >© AVOCAT 2022. All rights reserved
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -43,7 +52,7 @@ export default {
     return {
       username: "",
       error: "",
-      errorAnimation: false
+      errorAnimation: false,
     };
   },
   components: {
@@ -56,10 +65,9 @@ export default {
       this.username = name;
     },
     async createUser() {
-      this.errorAnimation = false;
-      if (this.username == ""){
+      this.error = "";
+      if (this.username == "") {
         this.error = "Username is empty. Try again.";
-        this.errorAnimation = true;
         return;
       }
       const req = await fetch(
@@ -70,10 +78,9 @@ export default {
         console.log(`Token is: ${res["response"]["token"]}`);
         document.cookie = `token=${res["response"]["token"]}`;
         document.cookie = `username=${this.username}`;
-        location.href = "http://localhost:3000/#/app";
+        this.$router.push("/app");
       } else {
         this.error = "User is created. Try change username";
-        this.errorAnimation = true;
       }
     },
   },

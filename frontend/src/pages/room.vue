@@ -12,7 +12,7 @@
       <div class="flex flex-col w-screen h-screen justify-center items-center">
         <div class="flex flex-col w-full h-full">
           <div class="p-3 w-72 h-32">
-            <a href="http://localhost:3000/#/app"><icon /></a>
+            <a @click="exit_from_room()"><icon /></a>
             <div class="flex w-full py-3 justify-between">
               <h2 class="text-2xl">{{ username }}</h2>
               <button class="flex text-2xl py-1" @click="logout()">
@@ -39,99 +39,131 @@
       </div>
     </div>
 
-    <div class="flex flex-col items-center justify-center">
-      <div class="w-4/6">
-        <div class="overflow-y-scroll scroller" id="mainChat">
-          <div v-for="msg in dialog" :key="msg">
-            <!-- Обработка статусов (вход в чат и выход из чата) -->
-            <div
-              v-if="msg.action_code == 2 || msg.action_code == 3"
-              class="flex justify-center font-semibold text-xl"
+    <div class="flex flex-col items-center h-full">
+      <div class="flex flex-auto justify-center items-end w-5/6 shadow-md">
+        <div class="w-4/6">
+          <div class="overflow-y-auto scroller" id="mainChat">
+            <TransitionGroup
+              id="transition"
+              name="msg"
+              tag="div"
+              @transitionstart="scrollDown()"
             >
-              {{ msg.author }} {{ msg.action }}
-            </div>
-            <div
-              v-else-if="msg.author === this.username"
-              class="flex justify-end"
-            >
-              <div
-                style="background: #33373d"
-                class="m-5 p-3 px-5 rounded-3xl w-1/2"
-              >
-                <p class="mx-5 font-semibold">{{ msg.author }}</p>
-                <p class="my-1" v-html="msg.text"></p>
-                <div class="flex justify-end mx-3 msgtime">
-                  {{ msg.time }}
+              <div v-for="msg in dialog" :key="msg">
+                <!-- Обработка статусов (вход в чат и выход из чата) -->
+                <div
+                  v-if="msg.action_code == 2 || msg.action_code == 3"
+                  class="flex justify-center font-semibold text-xl"
+                >
+                  {{ msg.author }} {{ msg.action }}
+                </div>
+                <div
+                  v-else-if="msg.author === this.username"
+                  class="flex justify-end"
+                >
+                  <div
+                    :style="msg.background"
+                    class="m-5 p-3 px-5 rounded-3xl max-w-md"
+                  >
+                    <p class="mx-5 font-semibold">{{ msg.author }}</p>
+                    <p
+                      v-if="msg.sticker.length == 0"
+                      v-html="msg.text"
+                      class="font-normal"
+                    ></p>
+                    <img
+                      v-else
+                      class="h-48"
+                      :src="'/stickers/' + msg.sticker[0]['file']"
+                    />
+                    <div class="flex mx-4 items-end justify-end msgtime">
+                      {{ msg.time }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- а вы гей? мы да. че пиздишь ты наурал. нет сам ты наурал. ну на урал так ну урал мне пох. -->
+
+                <div v-else>
+                  <div
+                    :style="msg.background"
+                    class="m-5 p-3 px-5 w-fit max-w-md rounded-3xl"
+                  >
+                    <p class="mx-5 font-semibold">{{ msg.author }}</p>
+                    <p class="p-3" v-html="msg.text"></p>
+                    <p
+                      v-if="msg.sticker.length == 0"
+                      v-html="msg.text"
+                      class="font-normal"
+                    ></p>
+                    <img
+                      v-else
+                      class="h-48"
+                      :src="'/stickers/' + msg.sticker[0]['file']"
+                    />
+                    <div class="flex mx-4 items-end justify-end msgtime">
+                      {{ msg.time }}
+                    </div>
+                  </div>
                 </div>
               </div>
+            </TransitionGroup>
+          </div>
+          <div>
+            <ShowNewMessage :text="'ASDASDASD'" />
+            <stickerPanel @choise="sendSticker" />
+            <div class="flex h-14">
+              <Input
+                @chatmessage="setMessage"
+                v-on:keyup.enter="sendMessage(this.chatmessage, 0)"
+                id="chatInput"
+                class="w-full"
+                :type="'chat'"
+              />
+              <img
+                @click="sendMessage(this.chatmessage, 0)"
+                class="h-full ml-4 px-4 cursor-pointer transition ease-in-out duration-200 hover:scale-125"
+                src="/send.svg"
+                alt="send"
+              />
             </div>
 
-            <div v-else>
-              <div
-                style="background: #33373d"
-                class="m-5 p-3 px-5 rounded-3xl w-1/2"
-              >
-                <p class="mx-5 font-semibold">{{ msg.author }}</p>
-                <p class="my-1" v-html="msg.text"></p>
-                <div class="flex justify-end mx-3 msgtime">
-                  {{ msg.time }}
+            <!-- bottom icons -->
+            <div class="flex w-full justify-center">
+              <div class="flex w-4/6 p-5 justify-between">
+                <div
+                  class="flex flex-col cursor-pointer transition ease-in-out duration-200 hover:scale-125"
+                >
+                  <img
+                    @click="change_room()"
+                    class="h-10 cursor-pointer"
+                    src="/search.svg"
+                    alt=""
+                  />
+                  Найти другого
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="flex h-14">
-            <Input
-              @chatmessage="setMessage"
-              v-on:keyup.enter="sendMessage()"
-              id="chatInput"
-              class="w-full"
-              :type="'chat'"
-            />
-            <img
-              @click="sendMessage()"
-              class="h-full ml-4 px-4 cursor-pointer transition ease-in-out duration-200 hover:scale-125"
-              src="/send.svg"
-              alt="send"
-            />
-          </div>
-
-          <!-- bottom icons -->
-          <div class="flex w-full justify-center">
-            <div class="flex w-4/6 p-5 justify-between">
-              <div
-                class="flex flex-col cursor-pointer transition ease-in-out duration-200 hover:scale-125"
-              >
-                <img
-                  @click="console.log('asd')"
-                  class="h-10 cursor-pointer"
-                  src="/search.svg"
-                  alt=""
-                />
-                Найти другого
-              </div>
-              <div
-                class="flex flex-col cursor-pointer transition ease-in-out duration-200 hover:scale-125"
-              >
-                <img
-                  @click="console.log('asd')"
-                  class="h-10"
-                  src="/quit.svg"
-                  alt=""
-                />
-                Прекратить общение
-              </div>
-              <div
-                class="flex flex-col cursor-pointer transition ease-in-out duration-200 hover:scale-125"
-              >
-                <img
-                  @click="console.log('asd')"
-                  class="h-10"
-                  src="/complaint.svg"
-                  alt=""
-                />
-                Жалоба
+                <div
+                  class="flex flex-col cursor-pointer transition ease-in-out duration-200 hover:scale-125"
+                >
+                  <img
+                    @click="exit_from_room()"
+                    class="h-10"
+                    src="/quit.svg"
+                    alt=""
+                  />
+                  Прекратить общение
+                </div>
+                <div
+                  class="flex flex-col cursor-pointer transition ease-in-out duration-200 hover:scale-125"
+                >
+                  <img
+                    @click="console.log('asd')"
+                    class="h-10"
+                    src="/complaint.svg"
+                    alt=""
+                  />
+                  Жалоба
+                </div>
               </div>
             </div>
           </div>
@@ -146,7 +178,10 @@ import Icon from "../components/icon.vue";
 import Btn from "../components/btn.vue";
 import Input from "../components/input.vue";
 import { marked } from "marked";
-import emoji_list from "./emojilist.json";
+import emoji_list from "../../public/emojilist.json";
+import stickers_list from "../../public/stickers/stickers.json";
+import stickerPanel from "../components/stickerPanel.vue";
+import showNewMessage from "../components/showNewMessage.vue";
 
 export default {
   data() {
@@ -158,25 +193,32 @@ export default {
       roomtoken: "",
       dialog: [],
       chatmessage: "",
-      emoji_list: emoji_list
+      emoji_list: emoji_list,
     };
   },
   components: {
     Icon,
     Btn,
     Input,
+    stickerPanel,
+    showNewMessage,
   },
   methods: {
     /**
      * Очистка всех куки и удаление пользователя.
      */
+
     async logout() {
       await fetch(`http://localhost:8000/user/remove?token=${this.token}`);
       document.cookie = 'token=""';
       document.cookie = 'username=""';
-      document.cookie = 'limit=""';
       document.cookie = 'room=""';
       location.href = "http://localhost:3000";
+    },
+    async exit_from_room() {
+      await fetch(`http://localhost:8000/user/room.leave?token=${this.token}`);
+      document.cookie = 'room=""';
+      location.href = "http://localhost:3000/#/app";
     },
     updateToken() {
       this.token = document.cookie;
@@ -198,9 +240,14 @@ export default {
     /**
      * Отправка сообщения (через вебсокеты).
      */
-    async sendMessage() {
-      if (this.chatmessage !== "") {
-        this.connection.send(this.chatmessage);
+    async sendMessage(text, sticker) {
+      if (text != "" || sticker != 0) {
+        this.connection.send(
+          JSON.stringify({
+            text: text,
+            sticker_id: sticker,
+          })
+        );
         document.getElementById("chatInput").value = "";
         this.chatmessage = "";
       }
@@ -216,6 +263,13 @@ export default {
         let msg = JSON.parse(e.data).response;
         if (msg.author !== undefined && msg.text !== undefined) {
           msg.text = this.emojify(marked(msg.text));
+          msg.sticker = stickers_list.filter((x) => x["id"] == msg.sticker_id);
+          msg.background =
+            msg.sticker.length == 0
+              ? msg.author == this.username
+                ? "background:  #515861"
+                : "background: #33373d"
+              : "background: none";
           msg.time = new Date(msg.time * 1000).toLocaleTimeString();
           this.dialog.push(msg);
         }
@@ -232,16 +286,63 @@ export default {
       this.dialog = res["response"]["history"];
       this.dialog.forEach((msg) => {
         msg.text = this.emojify(marked(msg.text));
+        msg.sticker = stickers_list.filter((x) => x["id"] == msg.sticker_id);
+        msg.background =
+          msg.sticker.length == 0
+            ? msg.author == this.username
+              ? "background:  #515861"
+              : "background: #33373d"
+            : "background: none";
         msg.time = new Date(msg.time * 1000).toLocaleTimeString();
       });
+    },
+    async create_empty_room(limit) {
+      const req = await fetch(
+        `http://localhost:8000/room/new?user_token=${this.token}&name=asd123&users_limit=${limit}`
+      );
+      const ans = await req.json();
+      document.cookie = `room=${ans["response"]["token"]}`;
+    },
+    /**
+     *  Смена комнаты на другую
+     */
+    async change_room() {
+      const req = await fetch("http://localhost:8000/room/getall");
+      const ans = await req.json();
+      const available_rooms = ans["response"].filter(
+        (x) =>
+          x["users_limit"] == this.limit &&
+          !x["is_full"] &&
+          x["token"] != this.roomtoken
+      );
+      console.log(available_rooms);
+      console.log(ans["response"]);
+      if (available_rooms.length === 0) {
+        // Если нет доступных комнат - создаем новую.
+        await this.create_empty_room(this.limit);
+      } else {
+        const index = Math.floor(Math.random() * available_rooms.length);
+        document.cookie = `room=${available_rooms[index]["token"]}`;
+        // пробуем войти в комнату ...
+        const req = await fetch(
+          `http://localhost:8000/user/room.enter?token=${this.token}&room_token=${available_rooms[index]["token"]}`
+        );
+        const res = await req.json();
+        // если комната достигла лимита - создаем новую.
+        if ("detail" in res && res["detail"]["code"] == 6) {
+          await this.create_empty_room(this.limit);
+        }
+      }
+      location.href = "http://localhost:3000/#/room";
+      window.history.go();
     },
     /**
      * Перемотка в самый низ диалога.
      */
     scrollDown() {
       let chat = document.getElementById("mainChat");
-      chat.scrollIntoView({behavior: 'smooth'});
-      chat.scrollTop = chat.scrollHeight;
+      chat.scrollIntoView({ behavior: "smooth" });
+      chat.scrollTop = 100000;
     },
     /**
      * Переводит все :название_смайлика: в смайлики, если это возможно.
@@ -249,12 +350,15 @@ export default {
     emojify(str) {
       let matches = str.matchAll(/:([\w\d_]+):/g);
       [...matches].forEach((emoji_name) => {
-        if (emoji_name[1] in emoji_list){
+        if (emoji_name[1] in emoji_list) {
           str = str.replace(emoji_name[0], emoji_list[emoji_name[1]]);
         }
       });
       return str;
-    }
+    },
+    async sendSticker(sticker) {
+      await this.sendMessage("", sticker);
+    },
   },
   mounted() {
     this.token = this.getCookie("token");
@@ -267,18 +371,14 @@ export default {
     this.getDialog();
     this.createConnection();
   },
-  updated() {
-    this.scrollDown();
-  },
 };
 </script>
 
 <style>
 .scroller {
-  height: 600px;
+  max-height: 64vh;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  overflow-y: scroll;
 }
 
 .scroller::-webkit-scrollbar {
@@ -297,5 +397,25 @@ a {
 
 a:visited {
   color: green;
+}
+
+.msg-move,
+.msg-enter-active,
+.msg-leave-active {
+  transition: all 0.5s ease;
+}
+
+.msg-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.msg-leave-to {
+  opacity: 1;
+  transform: translateX(0px);
+}
+
+.msg-leave-active {
+  position: absolute;
 }
 </style>
