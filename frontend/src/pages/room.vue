@@ -266,7 +266,6 @@ export default {
     );
     this.getDialog();
     this.createConnection();
-    console.log(this.emojify(":heart: asdasdas da ad :smile:"));
   },
   updated() {
     this.scrollDown();

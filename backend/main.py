@@ -127,7 +127,7 @@ async def enter_in_room(token: str, room_token: str):
         message = Message(
             f'{user.username} left from chat',
             user.username, Message.Action.LEFT_FROM_CHAT)
-        await manager.broadcast_to_room(message, db, room_token)
+        await manager.broadcast_to_room(message, db, user.room)
         room.users.remove(user._id)
         await db.save_room(room)
     room = await db.get_room(room_token)
@@ -218,7 +218,9 @@ async def get_all_rooms():
         'response': [{
             'id': i._id,
             'name': i.name,
-            'token': i.token
+            'token': i.token,
+            'is_full': i.users_limit <= len(i.users),
+            'users_limit': i.users_limit
         } for i in rooms]
     }
 
