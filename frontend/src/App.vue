@@ -9,7 +9,7 @@
     </header> -->
     <div class="flex-auto text-white bg-wwhite dark:bg-bblack">
       <div class="w-screen h-screen pointer-events-none fixed p-10">
-        <div class="flex h-full items-end">
+        <!-- <div class="flex h-full items-end">
           <img
             v-if="theme == 'dark'"
             src="/white_theme.svg"
@@ -24,7 +24,7 @@
             alt="blacktheme"
             @click="changeTheme('dark')"
           />
-        </div>
+        </div> -->
       </div>
       <router-view />
     </div>
@@ -45,7 +45,17 @@ export default {
       console.log(localStorage.theme);
     },
   },
-  mounted() {},
+  mounted() {
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addListener(({ matches }) => {
+        if (matches) {
+          this.changeTheme("black");
+        } else {
+          this.changeTheme("light");
+        }
+      });
+  },
 };
 </script>
 

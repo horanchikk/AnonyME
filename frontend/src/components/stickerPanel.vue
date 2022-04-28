@@ -3,7 +3,7 @@
     <div
       v-for="line in stickers_grid"
       :key="line"
-      class="flex justify-center gap-5 my-2"
+      class="flex justify-center gap-5 my-2 animate__animated animate__fadeInDown"
     >
       <img
         class="h-14 inline-block cursor-pointer hover:scale-120"
