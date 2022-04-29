@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-screen h-screen bg">
+  <div class="flex flex-col w-screen h-screen overflow-hidden bg">
     <!-- <header class="flex justify-center h-12 bg-slate-700 text-white">
       <ul class="flex h-full items-center gap-5 theader">
         <router-link to="/home"> Home </router-link>

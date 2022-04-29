@@ -6,12 +6,12 @@
       /></a>
       <div class="flex w-full py-3 justify-between">
         <h2
-          class="text-3xl text-slate-700 dark:text-slate-500 animate__animated animate__fadeInLeft"
+          class="text-3xl text-slate-700 dark:text-slate-100 animate__animated animate__fadeInLeft"
         >
           {{ username }}
         </h2>
         <button
-          class="flex text-lg p-1 text-slate-700 dark:text-slate-500 animate__animated animate__fadeInLeft"
+          class="flex text-lg p-1 text-slate-700 dark:text-slate-100 animate__animated animate__fadeInLeft"
           @click="logout()"
         >
           Выйти
@@ -20,7 +20,9 @@
     </div>
 
     <div class="flex flex-col p-3 w-72 h-32" v-if="loading">
-      <div class="flex flex-col w-screen h-screen justify-center items-center">
+      <div
+        class="flex flex-col w-screen h-screen justify-center items-center overflow-hidden"
+      >
         <div class="flex flex-col w-full h-full">
           <div class="p-3 w-72 h-32">
             <a @click="exit_from_room()"><icon /></a>
@@ -88,7 +90,9 @@
                       class="h-48"
                       :src="'/stickers/' + msg.sticker[0]['file']"
                     />
-                    <div class="flex mx-4 items-end justify-end msgtime">
+                    <div
+                      class="flex mx-4 items-end justify-end text-slate-200 msgtime"
+                    >
                       {{ msg.time }}
                     </div>
                   </div>
@@ -98,9 +102,7 @@
 
                 <div v-else>
                   <div :class="msg.class">
-                    <p
-                      class="mx-5 font-semibold text-slate-700 dark:text-slate-200"
-                    >
+                    <p class="mx-5 font-semibold">
                       {{ msg.author }}
                     </p>
                     <p class="p-3" v-html="msg.text"></p>
@@ -274,19 +276,19 @@ export default {
     processMessage(msg) {
       msg.text = this.emojify(marked(msg.text));
       msg.sticker = stickers_list.filter((x) => x["id"] == msg.sticker_id);
-      msg.background =
-        msg.sticker.length == 0
-          ? msg.author == this.username
-            ? "background:  #515861"
-            : "background: #33373d"
-          : "background: none";
-      // m-5 p-3 px-5 rounded-3xl max-w-md
-      // msg.class =
+      // msg.background =
       //   msg.sticker.length == 0
       //     ? msg.author == this.username
-      //       ? "m-5 p-3 px-5 rounded-3xl max-w-md bg-color-msg-100 text-slate-700 dark:text-slate-200"
-      //       : "m-5 p-3 px-5 rounded-3xl max-w-md bg-color-msg-200 text-slate-700 dark:text-slate-200"
-      //     : "m-5 p-3 px-5 rounded-3xl max-w-md text-slate-700 dark:text-slate-200";
+      //       ? "background:  #515861"
+      //       : "background: #33373d"
+      //     : "background: none";
+      // m-5 p-3 px-5 rounded-3xl max-w-md
+      msg.class =
+        msg.sticker.length == 0
+          ? msg.author == this.username
+            ? "m-5 p-3 px-5 rounded-3xl max-w-md bg-msg-100 text-slate-200"
+            : "m-5 p-3 px-5 rounded-3xl max-w-md bg-msg-200 text-slate-200"
+          : "m-5 p-3 px-5 rounded-3xl max-w-md text-slate-700 dark:text-slate-100";
 
       msg.time = new Date(msg.time * 1000).toLocaleTimeString();
       console.log(msg);
