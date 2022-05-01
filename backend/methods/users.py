@@ -70,7 +70,11 @@ async def get_all_users():
 
 
 @users.get('/messages.send')
-async def user_send_message(token: str, text: str = '', sticker_id: int = 0):
+async def user_send_message(
+        token: str,
+        text: str = '',
+        sticker_id: int = 0
+):
     """Sends message to the room"""
     if not await db.has_user_by_token(token):
         return Errors.USER_IS_NOT_EXISTS.value

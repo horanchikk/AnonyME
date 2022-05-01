@@ -67,7 +67,9 @@
               <div v-for="msg in dialog" :key="msg">
                 <!-- Обработка статусов (вход в чат и выход из чата) -->
                 <div
-                  v-if="[2,3,4].filter(x => msg.action_code == x).length > 0"
+                  v-if="
+                    [2, 3, 4].filter((x) => msg.action_code == x).length > 0
+                  "
                   class="flex justify-center font-semibold text-xl text-slate-700 dark:text-slate-200"
                 >
                   {{ msg.author }} {{ msg.action }}
@@ -105,19 +107,20 @@
                     <p class="mx-5 font-semibold">
                       {{ msg.author }}
                     </p>
-                    <p class="p-3" v-html="msg.text"></p>
-                    <p
-                      v-if="msg.sticker.length == 0"
-                      v-html="msg.text"
-                      class="font-normal"
-                    ></p>
-                    <img
-                      v-else
-                      class="h-48"
-                      :src="'/stickers/' + msg.sticker[0]['file']"
-                    />
-                    <div class="flex mx-4 items-end justify-end msgtime">
-                      {{ msg.time }}
+                    <div v-if="msg.sticker.length == 0">
+                      <p class="py-3" v-html="msg.text"></p>
+                      <div class="flex mx-4 items-end justify-end msgtime">
+                        {{ msg.time }}
+                      </div>
+                    </div>
+                    <div v-else>
+                      <img
+                        class="h-48"
+                        :src="'/stickers/' + msg.sticker[0]['file']"
+                      />
+                      <div class="flex mx-4 items-end justify-start msgtime">
+                        {{ msg.time }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -200,6 +203,8 @@ import emoji_list from "../../public/emojilist.json";
 import stickers_list from "../../public/stickers/stickers.json";
 import stickerPanel from "../components/stickerPanel.vue";
 import showNewMessage from "../components/showNewMessage.vue";
+import API from "../mixins/api";
+import cookies from "../mixins/cookies";
 
 export default {
   data() {
@@ -221,39 +226,17 @@ export default {
     stickerPanel,
     showNewMessage,
   },
+  mixins: [API, cookies],
   methods: {
     /**
      * Очистка всех куки и удаление пользователя.
      */
 
-    async logout() {
-      await fetch(`http://109.248.133.17:8000/users/remove?token=${this.token}`);
-      document.cookie = 'token=""';
-      document.cookie = 'username=""';
-      document.cookie = 'room=""';
-      location.href = "http://localhost:3000";
-    },
-    async exit_from_room() {
-      await fetch(`http://109.248.133.17:8000/users/room.leave?token=${this.token}`);
-      document.cookie = 'room=""';
-      location.href = "http://localhost:3000/#/app";
-    },
     updateToken() {
       this.token = document.cookie;
     },
     setMessage(value) {
       this.chatmessage = value;
-    },
-    getCookie(name) {
-      // какой-то костыль, js пофиксите твари :cry:
-      let matches = document.cookie.match(
-        new RegExp(
-          "(?:^|; )" +
-            name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
-            "=([^;]*)"
-        )
-      );
-      return matches ? decodeURIComponent(matches[1]) : undefined;
     },
     /**
      * Отправка сообщения (через вебсокеты).
@@ -270,10 +253,8 @@ export default {
         this.chatmessage = "";
       }
     },
-    /**
-     * Обработка сообщений
-     */
     processMessage(msg) {
+      console.log(msg);
       msg.text = this.emojify(marked(msg.text));
       msg.sticker = stickers_list.filter((x) => x["id"] == msg.sticker_id);
       // msg.background =
@@ -286,9 +267,9 @@ export default {
       msg.class =
         msg.sticker.length == 0
           ? msg.author == this.username
-            ? "m-5 p-3 px-5 rounded-3xl max-w-md bg-msg-100 text-slate-200"
-            : "m-5 p-3 px-5 rounded-3xl max-w-md bg-msg-200 text-slate-200"
-          : "m-5 p-3 px-5 rounded-3xl max-w-md text-slate-700 dark:text-slate-100";
+            ? "m-5 p-3 px-5 rounded-3xl max-w-xs bg-msg-100 text-slate-200"
+            : "m-5 p-3 px-5 rounded-3xl max-w-xs bg-msg-200 text-slate-200"
+          : "m-5 p-3 px-5 rounded-3xl max-w-xs text-slate-700 dark:text-slate-100";
 
       msg.time = new Date(msg.time * 1000).toLocaleTimeString();
       return msg;
@@ -311,36 +292,27 @@ export default {
      * Получение истории чата и запись в dialog.
      */
     async getDialog() {
-      const req = await fetch(
-        `http://109.248.133.17:8000/rooms/history.get?token=${this.roomtoken}`
-      );
-      const res = await req.json();
+      const res = await API.getRoomHistory(this.roomtoken);
       this.dialog = res["response"]["history"];
       this.dialog.forEach((msg) => {
         msg = this.processMessage(msg);
       });
     },
     async create_empty_room(limit) {
-      const req = await fetch(
-        `http://109.248.133.17:8000/rooms/new?user_token=${this.token}&name=asd123&users_limit=${limit}`
-      );
-      const ans = await req.json();
+      const ans = await API.newRoom(this.token, limit);
       document.cookie = `room=${ans["response"]["token"]}`;
     },
     /**
      *  Смена комнаты на другую
      */
     async change_room() {
-      const req = await fetch("http://109.248.133.17:8000/rooms/getall");
-      const ans = await req.json();
+      const ans = await API.getAllRooms();
       const available_rooms = ans["response"].filter(
         (x) =>
           x["users_limit"] == this.limit &&
           !x["is_full"] &&
           x["token"] != this.roomtoken
       );
-      console.log(available_rooms);
-      console.log(ans["response"]);
       if (available_rooms.length === 0) {
         // Если нет доступных комнат - создаем новую.
         await this.create_empty_room(this.limit);
@@ -348,10 +320,10 @@ export default {
         const index = Math.floor(Math.random() * available_rooms.length);
         document.cookie = `room=${available_rooms[index]["token"]}`;
         // пробуем войти в комнату ...
-        const req = await fetch(
-          `http://109.248.133.17:8000/users/room.enter?token=${this.token}&room_token=${available_rooms[index]["token"]}`
+        const res = await API.enterInRoom(
+          this.token,
+          available_rooms[index]["token"]
         );
-        const res = await req.json();
         // если комната достигла лимита - создаем новую.
         if ("detail" in res && res["detail"]["code"] == 6) {
           await this.create_empty_room(this.limit);
@@ -388,12 +360,12 @@ export default {
     },
   },
   mounted() {
-    this.token = this.getCookie("token");
-    this.username = this.getCookie("username");
-    this.limit = this.getCookie("limit");
-    this.roomtoken = this.getCookie("room");
+    this.token = cookies.getCookie("token");
+    this.username = cookies.getCookie("username");
+    this.limit = cookies.getCookie("limit");
+    this.roomtoken = cookies.getCookie("room");
     this.connection = new WebSocket(
-      `ws://109.248.133.17:8000/users/poll?token=${this.token}`
+      `${API.ws_url}users/poll?token=${this.token}`
     );
     this.getDialog();
     this.createConnection();
@@ -401,48 +373,4 @@ export default {
 };
 </script>
 
-<style>
-.scroller {
-  max-height: 64vh;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scroller::-webkit-scrollbar {
-  display: none;
-}
-
-.msgtime {
-  transform: translate(10px, 5px);
-  color: rgba(255, 255, 255, 0.5);
-}
-
-a {
-  text-decoration: overline;
-  color: red;
-}
-
-a:visited {
-  color: green;
-}
-
-.msg-move,
-.msg-enter-active,
-.msg-leave-active {
-  transition: all 0.5s ease;
-}
-
-.msg-enter-from {
-  opacity: 0;
-  transform: translateX(20px);
-}
-
-.msg-leave-to {
-  opacity: 1;
-  transform: translateX(0px);
-}
-
-.msg-leave-active {
-  position: absolute;
-}
-</style>
+<style />

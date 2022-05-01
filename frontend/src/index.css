@@ -10,3 +10,72 @@
   color: aquamarine;
   transition: 0.2s ease-in-out;
 }
+
+/* home.vue */
+
+.icon-animate {
+  animation: backInDown 1s;
+}
+
+.body-animate {
+  animation: backInUp 1s;
+}
+
+/* room.vue  */
+
+.scroller {
+  max-height: 64vh;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.msgtime {
+  transform: translate(10px, 5px);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+a {
+  text-decoration: overline;
+  color: red;
+}
+
+a:visited {
+  color: green;
+}
+
+.msg-move,
+.msg-enter-active,
+.msg-leave-active {
+  transition: all 0.5s ease;
+}
+
+.msg-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.msg-leave-to {
+  opacity: 1;
+  transform: translateX(0px);
+}
+
+.msg-leave-active {
+  position: absolute;
+}
+
+@media only screen and (min-width: 200px) {
+}
+
+.stickers {
+  height: 3.5rem;
+  max-height: 5rem;
+  transition: height 0.2s linear;
+}
+
+.stickers:hover {
+  height: 5rem;
+}

@@ -49,7 +49,8 @@
 import Icon from "../components/icon.vue";
 import Btn from "../components/btn.vue";
 import Input from "../components/input.vue";
-import API from "../components/backapi.vue";
+import API from "../mixins/api";
+import cookies from "../mixins/cookies";
 
 export default {
   data() {
@@ -63,8 +64,8 @@ export default {
     Icon,
     Btn,
     Input,
-    API,
   },
+  mixins: [API, cookies],
   methods: {
     setUsername(name) {
       this.username = name;
@@ -76,8 +77,7 @@ export default {
         return;
       }
       const res = await API.newUser(this.username);
-      console.log(req);
-      if (res.ok) {
+      if ("response" in res) {
         console.log(`Token is: ${res["response"]["token"]}`);
         document.cookie = `token=${res["response"]["token"]}`;
         document.cookie = `username=${this.username}`;
@@ -90,12 +90,4 @@ export default {
 };
 </script>
 
-<style>
-.icon-animate {
-  animation: backInDown 1s;
-}
-
-.body-animate {
-  animation: backInUp 1s;
-}
-</style>
+<style />

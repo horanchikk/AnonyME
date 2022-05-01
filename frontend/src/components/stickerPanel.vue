@@ -5,13 +5,13 @@
       :key="line"
       class="flex justify-center gap-5 my-2 animate__animated animate__fadeInDown"
     >
-      <img
-        class="h-14 inline-block cursor-pointer hover:scale-120"
-        v-for="file in line"
-        :key="file"
-        :src="'/stickers/' + file['file']"
-        @click="$emit('choise', file['id'])"
-      />
+      <div class="inline-block cursor-pointer" v-for="file in line" :key="file">
+        <img
+          class="stickers h-14 hover:h-16"
+          :src="'/stickers/' + file['file']"
+          @click="$emit('choise', file['id'])"
+        />
+      </div>
     </div>
   </div>
 </template>

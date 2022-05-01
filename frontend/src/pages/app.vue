@@ -47,7 +47,8 @@
 import Icon from "../components/icon.vue";
 import Btn from "../components/btn.vue";
 import Input from "../components/input.vue";
-import API from "../components/backapi.vue";
+import API from "../mixins/api";
+import cookies from "../mixins/cookies";
 
 export default {
   data() {
@@ -61,8 +62,8 @@ export default {
     Icon,
     Btn,
     Input,
-    API,
   },
+  mixins: [API, cookies],
   methods: {
     async logout() {
       // 500 status code + CORS ERROR => FastAPI error
@@ -86,20 +87,15 @@ export default {
       return matches ? decodeURIComponent(matches[1]) : undefined;
     },
     async create_empty_room(limit) {
-      const req = await fetch(
-        `http://109.248.133.17:8000/rooms/new?user_token=${this.token}&name=asd123&users_limit=${limit}`
-      );
-      const ans = await req.json();
-      document.cookie = `room=${ans["response"]["token"]}`;
+      const res = await API.newRoom(this.token, limit);
+      document.cookie = `room=${res["response"]["token"]}`;
     },
     async enter_in_room(limit) {
-      const req = await fetch("http://109.248.133.17:8000/rooms/getall");
-      const ans = await req.json();
-      const available_rooms = ans["response"].filter(
+      const res = await API.getAllRooms();
+      console.log(res);
+      const available_rooms = res["response"].filter(
         (x) => x["users_limit"] == limit && !x["is_full"]
       );
-      console.log(available_rooms);
-      console.log(ans["response"]);
       if (available_rooms.length === 0) {
         // Если нет доступных комнат - создаем новую.
         await this.create_empty_room(limit);
@@ -107,10 +103,10 @@ export default {
         const index = Math.floor(Math.random() * available_rooms.length);
         document.cookie = `room=${available_rooms[index]["token"]}`;
         // пробуем войти в комнату ...
-        const req = await fetch(
-          `http://109.248.133.17:8000/users/room.enter?token=${this.token}&room_token=${available_rooms[index]["token"]}`
+        const res = await API.enterInRoom(
+          this.token,
+          available_rooms[index]["token"]
         );
-        const res = await req.json();
         // если комната достигла лимита - создаем новую.
         if ("detail" in res && res["detail"]["code"] == 6) {
           await this.this.create_empty_room(limit);
