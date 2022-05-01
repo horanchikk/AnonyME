@@ -1,7 +1,8 @@
 from random import choice
 from string import ascii_lowercase, ascii_uppercase, digits
 
-from fastapi import Response, status
+from fastapi import status
+from fastapi.responses import JSONResponse
 
 
 async def gen_token(size: int = 64) -> str:
@@ -15,8 +16,13 @@ async def gen_token(size: int = 64) -> str:
 def gen_error(
         value: str,
         error_code: int
-) -> Response:
+) -> JSONResponse:
     """This function generates an error response."""
-    return Response(
-        content=f'{{"detail": {{"message": "{value}", "code": {error_code}}}}}',
+    return JSONResponse(
+        content={
+            'detail': {
+                'message': value,
+                'code': error_code
+            }
+        },
         status_code=status.HTTP_400_BAD_REQUEST)

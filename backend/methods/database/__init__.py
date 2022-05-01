@@ -1,8 +1,10 @@
 from sqlite3 import connect
-from json import loads, dumps
-from typing import NoReturn, Dict, Any
-from user import User
-from room import Room
+from json import dumps
+from typing import NoReturn
+
+from .message import Message
+from .room import Room
+from .user import User
 
 
 class Database:
@@ -164,3 +166,6 @@ class Database:
             (user.username, user.room, user._id)
         )
         self.connection.commit()
+
+
+db = Database()

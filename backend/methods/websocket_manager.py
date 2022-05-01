@@ -1,8 +1,7 @@
 from typing import NoReturn, List, Dict, Any
 
 from fastapi import WebSocket
-from database import Database
-from message import Message
+from .database import Database, Message
 
 
 class WebsocketManager:

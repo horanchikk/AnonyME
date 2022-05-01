@@ -1,7 +1,7 @@
 from json import loads, dumps
 from typing import NoReturn, List, Dict, Any
 
-from message import Message
+from .message import Message
 
 
 class Room:
