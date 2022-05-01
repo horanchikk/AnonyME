@@ -63,7 +63,7 @@ export default {
         return;
       }
       const req = await fetch(
-        `http://localhost:8000/user/new?name=${this.username}`
+        `http://localhost:8000/users/new?name=${this.username}`
       );
       if (req.ok) {
         const res = await req.json();

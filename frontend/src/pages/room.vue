@@ -45,7 +45,7 @@
           <div v-for="msg in dialog" :key="msg">
             <!-- Обработка статусов (вход в чат и выход из чата) -->
             <div
-              v-if="msg.action_code == 2 || msg.action_code == 3"
+              v-if="[2, 3, 4].filter((x) => {msg.action_code == x}).length > 0"
               class="flex justify-center font-semibold text-xl"
             >
               {{ msg.author }} {{ msg.action }}
@@ -171,7 +171,7 @@ export default {
      * Очистка всех куки и удаление пользователя.
      */
     async logout() {
-      await fetch(`http://localhost:8000/user/remove?token=${this.token}`);
+      await fetch(`http://localhost:8000/users/remove?token=${this.token}`);
       document.cookie = 'token=""';
       document.cookie = 'username=""';
       document.cookie = 'limit=""';
@@ -226,7 +226,7 @@ export default {
      */
     async getDialog() {
       const req = await fetch(
-        `http://localhost:8000/room/history.get?token=${this.roomtoken}`
+        `http://localhost:8000/rooms/history.get?token=${this.roomtoken}`
       );
       const res = await req.json();
       this.dialog = res["response"]["history"];
@@ -262,7 +262,7 @@ export default {
     this.limit = this.getCookie("limit");
     this.roomtoken = this.getCookie("room");
     this.connection = new WebSocket(
-      `ws://localhost:8000/user/poll?token=${this.token}`
+      `ws://localhost:8000/users/poll?token=${this.token}`
     );
     this.getDialog();
     this.createConnection();
