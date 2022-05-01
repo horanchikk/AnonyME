@@ -227,14 +227,14 @@ export default {
      */
 
     async logout() {
-      await fetch(`http://localhost:8000/users/remove?token=${this.token}`);
+      await fetch(`http://109.248.133.17:8000/users/remove?token=${this.token}`);
       document.cookie = 'token=""';
       document.cookie = 'username=""';
       document.cookie = 'room=""';
       location.href = "http://localhost:3000";
     },
     async exit_from_room() {
-      await fetch(`http://localhost:8000/users/room.leave?token=${this.token}`);
+      await fetch(`http://109.248.133.17:8000/users/room.leave?token=${this.token}`);
       document.cookie = 'room=""';
       location.href = "http://localhost:3000/#/app";
     },
@@ -312,7 +312,7 @@ export default {
      */
     async getDialog() {
       const req = await fetch(
-        `http://localhost:8000/rooms/history.get?token=${this.roomtoken}`
+        `http://109.248.133.17:8000/rooms/history.get?token=${this.roomtoken}`
       );
       const res = await req.json();
       this.dialog = res["response"]["history"];
@@ -322,7 +322,7 @@ export default {
     },
     async create_empty_room(limit) {
       const req = await fetch(
-        `http://localhost:8000/rooms/new?user_token=${this.token}&name=asd123&users_limit=${limit}`
+        `http://109.248.133.17:8000/rooms/new?user_token=${this.token}&name=asd123&users_limit=${limit}`
       );
       const ans = await req.json();
       document.cookie = `room=${ans["response"]["token"]}`;
@@ -331,7 +331,7 @@ export default {
      *  Смена комнаты на другую
      */
     async change_room() {
-      const req = await fetch("http://localhost:8000/rooms/getall");
+      const req = await fetch("http://109.248.133.17:8000/rooms/getall");
       const ans = await req.json();
       const available_rooms = ans["response"].filter(
         (x) =>
@@ -349,7 +349,7 @@ export default {
         document.cookie = `room=${available_rooms[index]["token"]}`;
         // пробуем войти в комнату ...
         const req = await fetch(
-          `http://localhost:8000/users/room.enter?token=${this.token}&room_token=${available_rooms[index]["token"]}`
+          `http://109.248.133.17:8000/users/room.enter?token=${this.token}&room_token=${available_rooms[index]["token"]}`
         );
         const res = await req.json();
         // если комната достигла лимита - создаем новую.
@@ -393,7 +393,7 @@ export default {
     this.limit = this.getCookie("limit");
     this.roomtoken = this.getCookie("room");
     this.connection = new WebSocket(
-      `ws://localhost:8000/users/poll?token=${this.token}`
+      `ws://109.248.133.17:8000/users/poll?token=${this.token}`
     );
     this.getDialog();
     this.createConnection();

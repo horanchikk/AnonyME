@@ -86,13 +86,13 @@ export default {
     },
     async create_empty_room(limit) {
       const req = await fetch(
-        `http://localhost:8000/rooms/new?user_token=${this.token}&name=asd123&users_limit=${limit}`
+        `http://109.248.133.17:8000/rooms/new?user_token=${this.token}&name=asd123&users_limit=${limit}`
       );
       const ans = await req.json();
       document.cookie = `room=${ans["response"]["token"]}`;
     },
     async enter_in_room(limit) {
-      const req = await fetch("http://localhost:8000/rooms/getall");
+      const req = await fetch("http://109.248.133.17:8000/rooms/getall");
       const ans = await req.json();
       const available_rooms = ans["response"].filter(
         (x) => x["users_limit"] == limit && !x["is_full"]
@@ -107,7 +107,7 @@ export default {
         document.cookie = `room=${available_rooms[index]["token"]}`;
         // пробуем войти в комнату ...
         const req = await fetch(
-          `http://localhost:8000/users/room.enter?token=${this.token}&room_token=${available_rooms[index]["token"]}`
+          `http://109.248.133.17:8000/users/room.enter?token=${this.token}&room_token=${available_rooms[index]["token"]}`
         );
         const res = await req.json();
         // если комната достигла лимита - создаем новую.
