@@ -1,12 +1,12 @@
 <template>
   <div
-    class="w-full h-full flex flex-col gap-1 justify-center items-center text-4xl font-semibold text-white helkow"
+    class="w-full h-full flex flex-col gap-1 overflow-hidden justify-center items-center text-4xl font-semibold text-white helkow"
   >
-    <icon class="my-5 icon-animate" />
+    <icon class="my-5 animate__animated animate__fadeInDown" />
     <div
-      class="flex flex-col flex-auto items-center justify-center body-animate"
+      class="flex flex-col flex-auto items-center justify-center animate__animated animate__fadeInUp"
     >
-      <h1 class="font-medium text-lg text-center">
+      <h1 class="font-medium text-lg text-center text-bblack dark:text-white">
         Приветствуем вас в
         <a class="font-bold" style="color: #ef313d">AnonyME</a> <br />
         Введите свой ник, чтобы продолжить работу
@@ -24,12 +24,23 @@
         :text="'Продолжить'"
         :type="'lg'"
       />
-      <h3 v-if="error != ''" class="my-3 font-bold text-red-500 text-base animate-bounce" @animationend="animateError = false">{{ error }}</h3>
+      <h3
+        v-if="error != ''"
+        class="my-3 font-bold text-red-500 text-base animate-pulse"
+        @animationend="error = ''"
+      >
+        {{ error }}
+      </h3>
     </div>
-    <div class="flex w-full h-20 text-xs items-end text-slate-500">
-      <a href="https://github.com/horanchikk/AnonyME"
-        >© AVOCAT 2022. All rights reserved
-      </a>
+
+    <div
+      class="flex w-full h-20 text-xs items-end text-slate-700 dark:text-slate-500"
+    >
+      <div class="flex flex-col">
+        <a href="https://github.com/horanchikk/AnonyME"
+          >© AVOCAT 2022. All rights reserved
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -43,7 +54,7 @@ export default {
     return {
       username: "",
       error: "",
-      errorAnimation: false
+      errorAnimation: false,
     };
   },
   components: {
@@ -56,10 +67,9 @@ export default {
       this.username = name;
     },
     async createUser() {
-      this.errorAnimation = false;
-      if (this.username == ""){
+      this.error = "";
+      if (this.username == "") {
         this.error = "Username is empty. Try again.";
-        this.errorAnimation = true;
         return;
       }
       const req = await fetch(
@@ -70,10 +80,9 @@ export default {
         console.log(`Token is: ${res["response"]["token"]}`);
         document.cookie = `token=${res["response"]["token"]}`;
         document.cookie = `username=${this.username}`;
-        location.href = "http://localhost:3000/#/app";
+        this.$router.push("/app");
       } else {
         this.error = "User is created. Try change username";
-        this.errorAnimation = true;
       }
     },
   },
@@ -81,33 +90,11 @@ export default {
 </script>
 
 <style>
-@keyframes fadein-icon {
-  0% {
-    transform: translateY(-50px);
-    opacity: 0%;
-  }
-  100% {
-    transform: translateY(0px);
-    opacity: 100%;
-  }
-}
-
 .icon-animate {
-  animation: fadein-icon 1000ms ease-in-out;
-}
-
-@keyframes fadein-body {
-  0% {
-    transform: translateY(50px);
-    opacity: 0%;
-  }
-  100% {
-    transform: translateY(0px);
-    opacity: 100%;
-  }
+  animation: backInDown 1s;
 }
 
 .body-animate {
-  animation: fadein-body 1000ms ease-in-out;
+  animation: backInUp 1s;
 }
 </style>

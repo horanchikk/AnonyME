@@ -25,7 +25,7 @@ async def create_room(
 ):
     """This function creates a new room."""
     if not await db.has_user_by_token(user_token):
-        return Errors.USER_IS_NOT_EXISTS
+        return Errors.USER_IS_NOT_EXISTS.value
     token = await gen_token()
     await db.add_room(name, token, users_limit)
 
@@ -42,7 +42,7 @@ async def create_room(
 async def get_room(token: str):
     """This function returns room data"""
     if not await db.has_room_by_token(token):
-        return Errors.ROOM_IS_NOT_EXISTS
+        return Errors.ROOM_IS_NOT_EXISTS.value
     room = await db.get_room(token)
     return {'response': room.json()}
 
@@ -51,7 +51,7 @@ async def get_room(token: str):
 async def remove_room(token: str):
     """Removes room from database"""
     if not await db.has_room_by_token(token):
-        return Errors.ROOM_IS_NOT_EXISTS
+        return Errors.ROOM_IS_NOT_EXISTS.value
     room = await db.get_room(token)
     for user_id in room.users:
         user = await db.get_user(user_id)
@@ -79,6 +79,6 @@ async def get_all_rooms():
 async def get_room_history(token: str):
     """Returns room messages history"""
     if not await db.has_room_by_token(token):
-        return Errors.ROOM_IS_NOT_EXISTS
+        return Errors.ROOM_IS_NOT_EXISTS.value
     room = await db.get_room(token)
     return {'response': {'history': room.json()['history']}}

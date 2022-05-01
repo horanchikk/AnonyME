@@ -24,5 +24,5 @@ def gen_error(
                 'message': value,
                 'code': error_code
             }
-        },
-        status_code=status.HTTP_400_BAD_REQUEST)
+        }, status_code=status.HTTP_400_BAD_REQUEST
+    )

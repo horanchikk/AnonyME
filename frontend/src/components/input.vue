@@ -11,7 +11,7 @@
   <input
     v-else-if="type === 'login'"
     v-model="username"
-    class="w-96 my-5 text-center transition ease-in-out duration-200 rounded-lg outline-none p-1 bg-slate-200 text-teal-600 focus:shadow-xl"
+    class="w-96 my-5 text-center transition ease-in-out duration-200 rounded-lg outline-none p-1 bg-slate-500 text-slate-50 shadow-black focus:shadow-2xl inputlogin"
     type="text"
     @input="this.$emit('username', this.username)"
   />
@@ -33,4 +33,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.inputlogin:focus {
+  box-shadow: 0 0 8px 1px white;
+}
+</style>
