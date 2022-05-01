@@ -19,23 +19,10 @@ class Message(dict):
             sticker_id: int = 0,
             reply: Dict[str, str] = {}
     ) -> None:
-        self.text = text
-        self.author = author
-        self.action = action.value[0]
-        self.action_code = action.value[1]
-        self.sticker_id = sticker_id
-        self.time = round(time())
-        self.reply = reply
-    
-    def json(self) -> Dict[str, Any]:
-        data = {
-            'text': self.text,
-            'author': self.author,
-            'action': self.action,
-            'action_code': self.action_code,
-            'time': self.time,
-            'reply': self.reply
-        }
-        if self.sticker_id:
-            data['sticker_id'] = self.sticker_id
-        return data
+        self['text'] = text
+        self['author'] = author
+        self['action'] = action.value[0]
+        self['action_code'] = action.value[1]
+        self['sticker_id'] = sticker_id
+        self['time'] = round(time())
+        self['reply'] = reply

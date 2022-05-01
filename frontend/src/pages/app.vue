@@ -47,6 +47,7 @@
 import Icon from "../components/icon.vue";
 import Btn from "../components/btn.vue";
 import Input from "../components/input.vue";
+import API from "../components/backapi.vue";
 
 export default {
   data() {
@@ -60,12 +61,12 @@ export default {
     Icon,
     Btn,
     Input,
+    API,
   },
   methods: {
     async logout() {
       // 500 status code + CORS ERROR => FastAPI error
-      await fetch(`http://localhost:8000/users/remove?token=${this.token}`);
-      console.log(`Token ${this.token} has been deleted from the server`);
+      await API.removeUser(this.token);
       document.cookie = 'token=""';
       document.cookie = 'username=""';
       document.cookie = 'limit=""';

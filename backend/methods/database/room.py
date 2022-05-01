@@ -1,4 +1,4 @@
-from json import loads, dumps
+from json import loads
 from typing import NoReturn, List, Dict, Any
 
 from .message import Message
@@ -24,7 +24,7 @@ class Room:
             self,
             msg: Message
     ) -> NoReturn:
-        self.history.append(msg.json())
+        self.history.append(msg)
     
     def __str__(self) -> str:
         return f'{self._id} {self.name}. {self.token}'

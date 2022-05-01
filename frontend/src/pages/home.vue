@@ -49,6 +49,8 @@
 import Icon from "../components/icon.vue";
 import Btn from "../components/btn.vue";
 import Input from "../components/input.vue";
+import API from "../components/backapi.vue";
+
 export default {
   data() {
     return {
@@ -61,6 +63,7 @@ export default {
     Icon,
     Btn,
     Input,
+    API,
   },
   methods: {
     setUsername(name) {
@@ -72,17 +75,15 @@ export default {
         this.error = "Username is empty. Try again.";
         return;
       }
-      const req = await fetch(
-        `http://109.248.133.17:8000/users/new?name=${this.username}`
-      );
-      if (req.ok) {
-        const res = await req.json();
+      const res = await API.newUser(this.username);
+      console.log(req);
+      if (res.ok) {
         console.log(`Token is: ${res["response"]["token"]}`);
         document.cookie = `token=${res["response"]["token"]}`;
         document.cookie = `username=${this.username}`;
         this.$router.push("/app");
       } else {
-        this.error = "User is created. Try change username";
+        this.error = res["detail"]["message"];
       }
     },
   },

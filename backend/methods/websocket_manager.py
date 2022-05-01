@@ -1,4 +1,4 @@
-from typing import NoReturn, List, Dict, Any
+from typing import NoReturn, List, Dict, Any, Tuple
 
 from fastapi import WebSocket
 from .database import Database, Message
@@ -48,6 +48,9 @@ class WebsocketManager:
             if _room_token != room_token:
                 continue
             try:
-                await ws.send_json({'response': message.json()})
+                await ws.send_json({'response': message})
             except RuntimeError as e:
                 print(e)
+
+
+manager = WebsocketManager()

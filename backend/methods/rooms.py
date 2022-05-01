@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from utils import gen_token
 from errors import Errors
-from .database import db
+from .database import Message, db
+from .websocket_manager import manager
 
 
 rooms = FastAPI()
@@ -35,6 +36,14 @@ async def create_room(
     user.room = token
     await db.save_room(room)
     await db.save_user(user)
+    message = Message(
+        f'{user.username} create room',
+        user.username,
+        Message.Action.CREATE_ROOM
+    )
+    manager.broadcast_to_room(
+        message, db, room.token
+    )
     return {'response': {'name': name, 'token': token}}
 
 
