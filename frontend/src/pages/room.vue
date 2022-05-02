@@ -286,6 +286,25 @@ export default {
         this.chatmessage = "";
       }
     },
+    /**
+     *  Просто отправляет стикер.
+     */
+    async sendSticker(sticker) {
+      await this.sendMessage("", sticker);
+    },
+    /**
+     *  Просто отправляет сообщение.
+     */
+    async sendText(text) {
+      await this.sendMessage(text, 0);
+    },
+    /**
+     * Обработка сообщения:
+     *   - обработка md-текста
+     *   - обработка эмоджи
+     * @param {String} msg текст сообщения.
+     * @returns обработанное сообщение
+     */
     processMessage(msg) {
       console.log(msg);
       msg.text = this.emojify(marked(msg.text));
@@ -324,6 +343,10 @@ export default {
         msg = this.processMessage(msg);
       });
     },
+    /**
+     * Создание пустой комнаты с указанным лимитом.
+     * @param {int} limit лимит комнаты.
+     */
     async create_empty_room(limit) {
       const ans = await API.newRoom(this.token, limit);
       document.cookie = `room=${ans["response"]["token"]}`;
@@ -368,6 +391,8 @@ export default {
     },
     /**
      * Переводит все :название_смайлика: в смайлики, если это возможно.
+     * @param {string} str строка, содержащая в себе :SMILENAME:
+     * @returns обработанная строка
      */
     emojify(str) {
       let matches = str.matchAll(/:([\w\d_]+):/g);
@@ -377,12 +402,6 @@ export default {
         }
       });
       return str;
-    },
-    /**
-     *  Просто отправляет стикер :)
-     */
-    async sendSticker(sticker) {
-      await this.sendMessage("", sticker);
     },
   },
   mounted() {
