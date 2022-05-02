@@ -74,24 +74,30 @@
                 >
                   {{ msg.author }} {{ msg.action }}
                 </div>
+
+                <!-- Сообщение пользователя -->
                 <div
                   v-else-if="msg.author === this.username"
                   class="flex justify-end"
                 >
                   <div :class="msg.class">
+                    <!-- Автор сообщения, в своем сообщении не стоит его отображать
                     <p class="mx-5 font-semibold">
                       {{ msg.author }}
-                    </p>
+                    </p> -->
+                    <!-- Текст сообщения -->
                     <p
                       v-if="msg.sticker.length == 0"
                       v-html="msg.text"
                       class="font-normal"
                     ></p>
+                    <!-- Стикер при наличии -->
                     <img
                       v-else
                       class="h-48"
                       :src="'/stickers/' + msg.sticker[0]['file']"
                     />
+                    <!-- Время сообщения -->
                     <div
                       class="flex mx-4 items-end justify-end text-slate-200 msgtime"
                     >
@@ -100,19 +106,22 @@
                   </div>
                 </div>
 
-                <!-- а вы гей? мы да. че пиздишь ты наурал. нет сам ты наурал. ну на урал так ну урал мне пох. -->
-
+                <!-- Сообщение собеседника -->
                 <div v-else>
                   <div :class="msg.class">
+                    
+                    <!-- Автор -->
                     <p class="mx-5 font-semibold">
                       {{ msg.author }}
                     </p>
+                    <!-- Текст -->
                     <div v-if="msg.sticker.length == 0">
                       <p class="py-3" v-html="msg.text"></p>
                       <div class="flex mx-4 items-end justify-end msgtime">
                         {{ msg.time }}
                       </div>
                     </div>
+                    <!-- Стикер -->
                     <div v-else>
                       <img
                         class="h-48"
@@ -128,8 +137,10 @@
             </TransitionGroup>
           </div>
           <div>
+            <!-- Панель со стикерами -->
             <stickerPanel @choise="sendSticker" />
             <div class="flex h-14">
+              <!-- Поле ввода для сообщений -->
               <Input
                 @chatmessage="setMessage"
                 v-on:keyup.enter="sendMessage(this.chatmessage, 0)"
@@ -137,6 +148,7 @@
                 class="w-full"
                 :type="'chat'"
               />
+              <!-- Кнопка отправки сообщений -->
               <img
                 @click="sendMessage(this.chatmessage, 0)"
                 class="h-full ml-4 px-4 cursor-pointer transition ease-in-out duration-200 hover:scale-125"
@@ -145,9 +157,10 @@
               />
             </div>
 
-            <!-- bottom icons -->
+            <!-- Нижние кнопки -->
             <div class="flex w-full justify-center">
               <div class="flex w-4/6 p-5 justify-between">
+                <!-- Найти другого (Сменить комнату) -->
                 <div
                   class="flex flex-col overflow-hidden cursor-pointer transition ease-in-out duration-200 hover:scale-125 animate__animated animate__fadeInUp"
                 >
@@ -161,6 +174,8 @@
                     Найти другого
                   </h1>
                 </div>
+
+                <!-- Прекратить общение (Выйти из комнаты) -->
                 <div
                   class="flex flex-col cursor-pointer transition ease-in-out duration-200 hover:scale-125 animate__animated animate__fadeInUp"
                 >
@@ -174,6 +189,8 @@
                     Прекратить общение
                   </h1>
                 </div>
+                
+                <!-- Жалоба (Здесь должно появляться окно голосования) -->
                 <div
                   class="flex flex-col cursor-pointer transition ease-in-out duration-200 hover:scale-125 animate__animated animate__fadeInUp"
                 >
@@ -183,7 +200,9 @@
                     src="/complaint.svg"
                     alt="complaint"
                   />
-                  <h1 class="text-slate-700 dark:text-slate-500">Жалоба</h1>
+                  <h1 class="text-slate-700 dark:text-slate-500">
+                    Жалоба
+                  </h1>
                 </div>
               </div>
             </div>
@@ -231,13 +250,15 @@ export default {
     /**
      * Очистка всех куки и удаление пользователя.
      */
-
     updateToken() {
       this.token = document.cookie;
     },
     setMessage(value) {
       this.chatmessage = value;
     },
+    /**
+     * Выход из аккаунта с последующим удалением аккаунта.
+     */
     async logout() {
       // 500 status code + CORS ERROR => FastAPI error
       await API.removeUser(this.token);
@@ -247,7 +268,11 @@ export default {
       location.href = "http://localhost:3000";
     },
     /**
-     * Отправка сообщения (через вебсокеты).
+     * Отправка сообщения (через вебсокеты).  
+     * Для отправки текста следует указать `0` для `sticker`.  
+     * Для отправки стикера следует указать `""` для `text`.
+     * @param {String} text текст сообщения
+     * @param {Int} sticker ID стикера.
      */
     async sendMessage(text, sticker) {
       if (text != "" || sticker != 0) {
