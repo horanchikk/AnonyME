@@ -1,28 +1,30 @@
 <div align="center">
 
 # AnonyME
-web-app for hackathon
+
+Web application for hackathon
 
 </div>
 
-## Get Started
-1. clone this repo:
+## Setting up a Workspace
+
+1. Сlone this repo:
    ```bash
    git clone https://github.com/horanchikk/anonyme
    cd anonyme
    ```
-2. Install `npm` packages:
+2. Install `npm` and `python` packages:
+
    ```bash
    cd frontend
    npm install
-   ```
-3. Install `python` packages:
-   ```bash
+
    cd ../backend
    pip install requirements.txt
    ```
 
-## Deployment
+3. Launch application
+
 - frontend:
   ```bash
   cd frontend && npm run dev
@@ -37,3 +39,4 @@ web-app for hackathon
   uvicorn main:app --reload --host 127.0.0.1 --port 8000
   ```
 
+Now you can navigate to http://localhost:3000/ where you can see start page of application.
