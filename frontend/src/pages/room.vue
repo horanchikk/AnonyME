@@ -238,6 +238,14 @@ export default {
     setMessage(value) {
       this.chatmessage = value;
     },
+    async logout() {
+      // 500 status code + CORS ERROR => FastAPI error
+      await API.removeUser(this.token);
+      document.cookie = 'token=""';
+      document.cookie = 'username=""';
+      document.cookie = 'limit=""';
+      location.href = "http://localhost:3000";
+    },
     /**
      * Отправка сообщения (через вебсокеты).
      */

@@ -33,17 +33,15 @@ async def create_room(
     user = await db.get_user(user_token)
     room = await db.get_room(token)
     room.add_user(user._id)
-    user.room = token
-    await db.save_room(room)
-    await db.save_user(user)
     message = Message(
         f'{user.username} create room',
         user.username,
         Message.Action.CREATE_ROOM
     )
-    manager.broadcast_to_room(
-        message, db, room.token
-    )
+    room.add_msg(message)
+    user.room = token
+    await db.save_room(room)
+    await db.save_user(user)
     return {'response': {'name': name, 'token': token}}
 
 
