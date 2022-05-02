@@ -9,8 +9,8 @@ if platform == 'win32':
     python = 'python'
     pip = 'pip'
 else:
-    python = 'python3.10'
-    pip = 'pip3.10'
+    python = 'python3'
+    pip = 'pip3'
 
 def initThread(typeserver):
     if typeserver == "uvicorn":
