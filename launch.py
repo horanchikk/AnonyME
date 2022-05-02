@@ -1,8 +1,14 @@
-import multiprocessing
-from time import sleep
+from multiprocessing import Process
 from sys import platform
-from subprocess import PIPE, call
-from psutil import process_iter
+from os import system as call
+from argparse import ArgumentParser
+
+
+parser = ArgumentParser()
+parser.add_argument('--front', help='launch command for npm (run or yarn)', default='yarn')
+parser.add_argument('--b-host', help='backend launch host, 127.0.0.1 for example', default='127.0.0.1')
+parser.add_argument('--b-port', help='backend launch port, 8000 for example', default=8000)
+args = parser.parse_args()
 
 
 if platform == 'win32':
@@ -12,47 +18,24 @@ else:
     python = 'python3'
     pip = 'pip3'
 
-def initThread(typeserver):
-    if typeserver == "uvicorn":
-            call(f'cd backend && {pip} install -r requirements.txt && uvicorn main:app --reload', stdout=PIPE, shell=True)
-            while True:
-                pass
-    if typeserver == "npm":
-            call("cd frontend && yarn && yarn dev", shell=True)
-            while True:
-                pass
 
-g = multiprocessing.Process(target=initThread, args=("npm", ))
-j = multiprocessing.Process(target=initThread, args=("uvicorn", ))
-g.daemon = True
-j.daemon = True
+def backend():
+    call(
+        f'cd backend && '
+        f'{pip} install -r requirements.txt && '
+        f'uvicorn main:app --reload --host {args.b_host} --port {args.b_port}',
+    )
 
 
-def server(args):
-    if args == 'kill':
-        g.kill()
-        j.kill()
-        
-        for proc in process_iter():
-            if proc.name() == 'node.exe':
-                proc.kill()
-            elif proc.name == 'node':
-                proc.kill()
-    if args ==  'run':
-        g.start()
-        j.start()
-        while True:
-            sleep(10000)
+def frontend():
+    command = 'npm run dev' if args.front == 'run' else 'yarn && yarn dev'
+    call(f'cd frontend && {command}')
 
 
 if __name__ == '__main__':
-    multiprocessing.freeze_support()
-    try:
-        server('run')
-    except KeyboardInterrupt or SystemExit:
-        server('kill')
-        print('\nserver has been stopped')
-    except Exception as e:
-        server('kill')
-        print("\n" + str(e))
-        print('\nserver has been stopped')
+    back = Process(target=backend, daemon=True)
+    front = Process(target=frontend, daemon=True)
+    back.start()
+    front.start()
+    back.join()
+    front.join()
