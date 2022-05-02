@@ -25,18 +25,8 @@ Web application for hackathon
 
 3. Launch application
 
-- frontend:
-  ```bash
-  cd frontend && npm run dev
-  ```
-  or
-  ```bash
-  cd frontend && yarn && yarn dev
-  ```
-- backend
-  ```bash
-  cd backend
-  uvicorn main:app --reload --host 127.0.0.1 --port 8000
-  ```
+```bash
+python launch.py
+```
 
 Now you can navigate to http://localhost:3000/ where you can see start page of application.
