@@ -301,7 +301,7 @@ export default {
         msg.sticker.length == 0
           ? msg.author == this.username
             ? "m-5 p-3 px-5 rounded-3xl max-w-xs bg-msg-100 text-slate-200"
-            : "m-5 p-3 px-5 rounded-3xl max-w-xs bg-msg-200 text-slate-200"
+            : "m-5 p-3 px-5 rounded-3xl max-w-xs w-fit bg-msg-200 text-slate-200"
           : "m-5 p-3 px-5 rounded-3xl max-w-xs text-slate-700 dark:text-slate-100";
 
       msg.time = new Date(msg.time * 1000).toLocaleTimeString();
