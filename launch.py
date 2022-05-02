@@ -13,13 +13,11 @@ else:
     pip = 'pip3.10'
 
 def initThread(typeserver):
-    match typeserver:
-        case "uvicorn":
+    if typeserver == "uvicorn":
             call(f'cd backend && {pip} install -r requirements.txt && uvicorn main:app --reload', stdout=PIPE, shell=True)
             while True:
                 pass
-
-        case "npm":
+    if typeserver == "npm":
             call("cd frontend && yarn && yarn dev", shell=True)
             while True:
                 pass
@@ -31,21 +29,20 @@ j.daemon = True
 
 
 def server(args):
-    match args:
-        case 'kill':
-            g.kill()
-            j.kill()
-            
-            for proc in process_iter():
-                if proc.name() == 'node.exe':
-                    proc.kill()
-                elif proc.name == 'node':
-                    proc.kill()
-        case 'run':
-            g.start()
-            j.start()
-            while True:
-                sleep(10000)
+    if args == 'kill':
+        g.kill()
+        j.kill()
+        
+        for proc in process_iter():
+            if proc.name() == 'node.exe':
+                proc.kill()
+            elif proc.name == 'node':
+                proc.kill()
+    if args ==  'run':
+        g.start()
+        j.start()
+        while True:
+            sleep(10000)
 
 
 if __name__ == '__main__':
