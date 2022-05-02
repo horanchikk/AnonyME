@@ -290,13 +290,6 @@ export default {
       console.log(msg);
       msg.text = this.emojify(marked(msg.text));
       msg.sticker = stickers_list.filter((x) => x["id"] == msg.sticker_id);
-      // msg.background =
-      //   msg.sticker.length == 0
-      //     ? msg.author == this.username
-      //       ? "background:  #515861"
-      //       : "background: #33373d"
-      //     : "background: none";
-      // m-5 p-3 px-5 rounded-3xl max-w-md
       msg.class =
         msg.sticker.length == 0
           ? msg.author == this.username
