@@ -54,6 +54,7 @@ async def remove_user(token: str):
         room.users.remove(user._id)
         await db.save_room(room)
     await db.remove_user(token)
+    return SUCCESS
 
 
 @users.get('/getall')

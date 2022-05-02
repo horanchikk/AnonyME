@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from utils import gen_token
 from errors import Errors
 from .database import Message, db
-from .websocket_manager import manager
 
 
 rooms = FastAPI()
