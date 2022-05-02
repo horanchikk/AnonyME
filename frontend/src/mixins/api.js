@@ -1,91 +1,117 @@
 const api_domen = "109.248.133.17:8000";
 const api_url = `http://${api_domen}/`;
 
+
+/**
+ * Отправляет запрос на url
+ * @param {String} url
+ */
+async function sendReqJson(url) {
+  const req = await fetch(url);
+  return await req.json();
+}
+
+
 export default {
+  /** Хранит ссылку для подключения к вебсокетам. */
   ws_url: `ws://${api_domen}/`,
 
   /**
    * Создает нового пользователя с указанным именем.
+   * @param {String} username имя создаваемого пользователя.
+   * @returns объект пользователя или объект ошибки.
    */
   async newUser(username) {
-    const req = await fetch(`${api_url}users/new?name=${username}`);
-    return await req.json();
+    return await sendReqJson(`${api_url}users/new?name=${username}`);
   },
   /**
-   * Возвращает пользователя по токену
+   * Возвращает пользователя по токену.
+   * @param {String} token токен пользователя.
+   * @returns объект пользователя или объект ошибки.
    */
   async getUser(token) {
-    const req = await fetch(`${api_url}users/get?token=${token}`);
-    return await req.json();
+    return await sendReqJson(`${api_url}users/get?token=${token}`);
   },
   /**
-   * Удаляет пользователя по токену
+   * Удаляет пользователя по токену.
+   * @param {String} username имя создаваемого пользователя.
    */
   async removeUser(token) {
-    const req = await fetch(`${api_url}users/remove?token=${token}`);
-    return await req.json();
+    return await sendReqJson(`${api_url}users/remove?token=${token}`);
   },
   /**
    * Отправляет сообщение в комнату пользователя по его токену
-   * text и sticker_id - текст сообщения и ID стикера соответственно.
+   * @param {String} token токен пользователя.
+   * @param {String} text текст сообщения.
+   * @param {Int} sticker_id ID стикера.
    */
   async sendMessageUser(token, text, sticker_id) {
-    const req = await fetch(
+    return await sendReqJson(
       `${api_url}users/messages.send?token=${token}&sticker_id=${sticker_id}&text=${text}`
     );
-    return await req.json();
   },
   /**
    * Возвращает список всех активных пользователей.
    */
   async getAllUsers() {
-    const req = await fetch(`${api_url}users/getall`);
-    return await req.json();
+    return await sendReqJson(`${api_url}users/getall`);
   },
   /**
    * Входит в комнату с room_token через токен пользователя.
    * При этом выходит из текущей комнаты.
+   * @param {String} token токен пользователя.
+   * @param {String} roomtoken токен комнаты.
    */
-  async enterInRoom(token, room_token) {
-    const req = await fetch(
-      `${api_url}users/room.enter?token=${token}&room_token=${room_token}`
+  async enterInRoom(token, roomtoken) {
+    return await sendReqJson(
+      `${api_url}users/room.enter?token=${token}&room_token=${roomtoken}`
     );
-    return await req.json();
   },
   /**
    * Выходит из текущей комнаты пользователя по токену пользователя.
-   * @param {*} token токен пользователя
+   * @param {String} token токен пользователя.
    */
   async leaveFromRoom(token) {
-    const req = await fetch(`${api_url}users/room.leave?token=${token}`);
-    return await req.json();
+    return await sendReqJson(`${api_url}users/room.leave?token=${token}`);
   },
 
   /**
    * Создает новую комнату, используя токен пользователя
-   * @param {*} token токен пользователя
-   * @param {*} limit лимит создаваемой комнаты
-   * @param {*} name имя создаваемой комнаты
+   * @param {String} token токен пользователя.
+   * @param {Int} limit лимит создаваемой комнаты.
+   * @param {String} name имя создаваемой комнаты.
    */
   async newRoom(token, limit, name = "asd12") {
-    const req = await fetch(
+    return await sendReqJson(
       `${api_url}rooms/new?user_token=${token}&name=${name}&users_limit=${limit}`
     );
-    return await req.json();
+  },
+  /**
+   * Возвращает комнату по ее токену, если это возможно.
+   * @param {String} token токен комнаты
+   * @returns Объект комнаты или объект ошибки
+   */
+  async getRoom(token) {
+    return await sendReqJson(`${api_url}rooms/get?token=${token}`);
+  },
+  /**
+   * Удаляет комнату по ее токену, если это возможно.
+   * @param {String} token токен комнаты
+   */
+  async removeRoom(token) {
+    return await sendReqJson(`${api_url}rooms/remove?token=${token}`);
   },
   /**
    *Возвращает список всех комнат.
    */
   async getAllRooms() {
-    const req = await fetch(`${api_url}rooms/getall`);
-    return await req.json();
+    return await sendReqJson(`${api_url}rooms/getall`);
   },
   /**
    * Возвращает историю сообщений комнаты по ее токену.
-   * @param {*} room_token токен комнаты
+   * @param {String} roomtoken токен комнаты
    */
-  async getRoomHistory(room_token) {
-    const req = await fetch(`${api_url}rooms/history.get?token=${room_token}`);
-    return await req.json();
+  async getRoomHistory(roomtoken) {
+    return await sendReqJson(`${api_url}rooms/history.get?token=${roomtoken}`);
   },
 };
