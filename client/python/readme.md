@@ -1,7 +1,8 @@
 <div align="center">
 
 # pyanonyme
-Python AnonyME client
+Python AnonyME client  
+[![PyPI version](https://badge.fury.io/py/pyanonyme.svg)](https://badge.fury.io/py/pyanonyme)
 
 </div>
 

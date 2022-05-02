@@ -1,0 +1,37 @@
+Metadata-Version: 2.1
+Name: pyanonyme
+Version: 1.0.0
+Summary: Python anonyme client
+Home-page: https://github.com/horanchikk/anonyme/tree/dev/client/python
+Author: AVOCAT
+Author-email: social.ethosa@gmail.com
+License: LGPLv3
+Project-URL: Github, https://github.com/horanchikk/anonyme/tree/dev/client/python
+Project-URL: Documentation, https://github.com/horanchikk/anonyme
+Keywords: Python Gql
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3
+Description-Content-Type: text/markdown
+
+<div align="center">
+
+# pyanonyme
+Python AnonyME client
+
+</div>
+
+## Get started
+### Install
+```bash
+pip install pyanonyme
+```
+
+

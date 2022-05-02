@@ -1,0 +1,11 @@
+setup.py
+client/__init__.py
+client/client.py
+client/exceptions.py
+pyanonyme.egg-info/PKG-INFO
+pyanonyme.egg-info/SOURCES.txt
+pyanonyme.egg-info/dependency_links.txt
+pyanonyme.egg-info/requires.txt
+pyanonyme.egg-info/top_level.txt
+tests/__init__.py
+tests/client_test.py
