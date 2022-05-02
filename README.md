@@ -6,7 +6,7 @@ web-app for hackathon
 </div>
 
 ## Get Started
-1. clone this repo:
+1. Сlone this repo:
    ```bash
    git clone https://github.com/horanchikk/anonyme
    cd anonyme
@@ -22,7 +22,7 @@ web-app for hackathon
    pip install requirements.txt
    ```
 
-## Deployment
+## Setting up a Workspace
 - frontend:
   ```bash
   cd frontend && npm run dev
