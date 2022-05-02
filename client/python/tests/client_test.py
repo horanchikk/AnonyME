@@ -1,8 +1,20 @@
 import unittest
+from client.python.client import AnonymeClient
 
-class MyTestCase(unittest.TestCase):
-    def test_something(self):
-        self.assertEqual(True, False)  # add assertion here
+
+class Client(unittest.TestCase):
+    client: AnonymeClient
+
+    @staticmethod
+    def test_1_init():
+        Client.client = AnonymeClient(
+            'http://109.248.133.17:8000/'
+        )
+
+    @staticmethod
+    def test_2_get_all_users():
+        print(Client.client.users_get_all())
+
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(verbosity=2)

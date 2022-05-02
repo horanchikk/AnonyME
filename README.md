@@ -5,7 +5,7 @@ web-app for hackathon
 
 </div>
 
-## Get Stared
+## Get Started
 1. clone this repo:
    ```bash
    git clone https://github.com/horanchikk/anonyme
