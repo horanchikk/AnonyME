@@ -1,6 +1,5 @@
-const api_domen = "109.248.133.17:8000";
+const api_domen = "localhost:8000";
 const api_url = `http://${api_domen}/`;
-
 
 /**
  * Отправляет запрос на url
@@ -10,7 +9,6 @@ async function sendReqJson(url) {
   const req = await fetch(url);
   return await req.json();
 }
-
 
 export default {
   /** Хранит ссылку для подключения к вебсокетам. */

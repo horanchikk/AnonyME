@@ -109,7 +109,6 @@
                 <!-- Сообщение собеседника -->
                 <div v-else>
                   <div :class="msg.class">
-                    
                     <!-- Автор -->
                     <p class="mx-5 font-semibold">
                       {{ msg.author }}
@@ -189,7 +188,7 @@
                     Прекратить общение
                   </h1>
                 </div>
-                
+
                 <!-- Жалоба (Здесь должно появляться окно голосования) -->
                 <div
                   class="flex flex-col cursor-pointer transition ease-in-out duration-200 hover:scale-125 animate__animated animate__fadeInUp"
@@ -200,9 +199,7 @@
                     src="/complaint.svg"
                     alt="complaint"
                   />
-                  <h1 class="text-slate-700 dark:text-slate-500">
-                    Жалоба
-                  </h1>
+                  <h1 class="text-slate-700 dark:text-slate-500">Жалоба</h1>
                 </div>
               </div>
             </div>
@@ -268,8 +265,8 @@ export default {
       location.href = "http://localhost:3000";
     },
     /**
-     * Отправка сообщения (через вебсокеты).  
-     * Для отправки текста следует указать `0` для `sticker`.  
+     * Отправка сообщения (через вебсокеты).
+     * Для отправки текста следует указать `0` для `sticker`.
      * Для отправки стикера следует указать `""` для `text`.
      * @param {String} text текст сообщения
      * @param {Int} sticker ID стикера.
@@ -306,7 +303,6 @@ export default {
      * @returns обработанное сообщение
      */
     processMessage(msg) {
-      console.log(msg);
       msg.text = this.emojify(marked(msg.text));
       msg.sticker = stickers_list.filter((x) => x["id"] == msg.sticker_id);
       msg.class =
