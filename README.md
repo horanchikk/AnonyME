@@ -29,4 +29,9 @@ Web application for hackathon
 python launch.py
 ```
 
+Or install all in one command 
+```bash
+git clone https://github.com/horanchikk/anonyme && cd anonyme && cd frontend && npm install && cd ../backend && pip install -r requirements.txt && cd .. && python3 launch.py
+```
+
 Now you can navigate to http://localhost:3000/ where you can see start page of application.
